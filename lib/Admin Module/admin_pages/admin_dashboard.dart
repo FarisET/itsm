@@ -307,7 +307,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   SizedBox(
                     height: 200,
                     child: SfCircularChart(
-                      title: const ChartTitle(text: 'Tickets by Location'),
+                      title: const ChartTitle(text: 'Tickets by Department'),
                       legend: const Legend(isVisible: true),
                       series: <CircularSeries>[
                         PieSeries<CountByLocation, String>(

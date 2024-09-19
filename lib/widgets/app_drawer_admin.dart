@@ -113,7 +113,7 @@ class AppDrawer extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Add SubLocation',
+                            'Add Department',
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: mainHeaderSize,
@@ -155,7 +155,7 @@ class AppDrawer extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Text(
-                            'Add Incident Type',
+                            'Add Category',
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: mainHeaderSize,
@@ -176,7 +176,7 @@ class AppDrawer extends StatelessWidget {
                       title: Row(
                         children: [
                           Text(
-                            'Add Incident Subtype',
+                            'Add Subcategory',
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: mainHeaderSize,
@@ -249,10 +249,10 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             horizontalTitleGap: 0,
-            leading: Icon(Icons.settings_outlined,
-                color: Theme.of(context).secondaryHeaderColor),
+            // leading: Icon(Icons.settings_outlined,
+            //     color: Theme.of(context).secondaryHeaderColor),
             title: Text(
-              'Settings',
+              '',
               style: TextStyle(
                 fontWeight: FontWeight.normal,
                 fontSize: mainHeaderSize,
