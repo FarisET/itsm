@@ -42,7 +42,7 @@ class _UserFormState extends State<UserForm> {
   final _formKey = GlobalKey<FormState>();
   int selectedChipIndex = -1;
   List<bool> isSelected = [false, false, false];
-  List<String> chipLabels = ['Minor', 'Major', 'Critical'];
+  List<String> chipLabels = ['Low', 'High', 'Critical'];
   List<String> chipLabelsid = ['CRT1', 'CRT2', 'CRT3'];
   String incidentType = '';
   String incidentSubType = '';
@@ -204,7 +204,7 @@ class _UserFormState extends State<UserForm> {
               Navigator.of(context).pop();
             },
           ),
-          title: Text("Report an Incident",
+          title: Text("Register Support",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -261,7 +261,7 @@ class _UserFormState extends State<UserForm> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8.0),
                                   child: Text(
-                                    'What type of incident did you witness?',
+                                    'Categorize your issue',
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .secondaryHeaderColor,
@@ -289,7 +289,7 @@ class _UserFormState extends State<UserForm> {
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
-                                              return 'Category is required';
+                                              return 'Kindly select a support cateogry';
                                             }
                                             return null;
                                           },
@@ -320,7 +320,7 @@ class _UserFormState extends State<UserForm> {
                                                     child: Row(
                                                       children: [
                                                         Text(
-                                                          'Category',
+                                                          'Support Category',
                                                           style: TextStyle(
                                                             color: Theme.of(
                                                                     context)
@@ -480,7 +480,7 @@ class _UserFormState extends State<UserForm> {
                                       }
                                     } else {
                                       return const Text(
-                                          'Please select a incident first',
+                                          'Please select a category first',
                                           style: TextStyle(
                                             color: Colors.red,
                                           ));
@@ -536,7 +536,7 @@ class _UserFormState extends State<UserForm> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8.0),
                                   child: Text(
-                                    'Where did you witness the incident?',
+                                    'Where are you located?',
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .secondaryHeaderColor,
@@ -595,7 +595,7 @@ class _UserFormState extends State<UserForm> {
                                                     child: Row(
                                                       children: [
                                                         Text(
-                                                          'Location',
+                                                          'Support Location',
                                                           style: TextStyle(
                                                             color: Theme.of(
                                                                     context)
@@ -874,13 +874,13 @@ class _UserFormState extends State<UserForm> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      Text(
-                                        ' (optional)',
-                                        style: TextStyle(
-                                            color: Theme.of(context).hintColor,
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 12),
-                                      )
+                                      // Text(
+                                      //   ' (optional)',
+                                      //   style: TextStyle(
+                                      //       color: Theme.of(context).hintColor,
+                                      //       fontWeight: FontWeight.normal,
+                                      //       fontSize: 12),
+                                      // )
                                     ],
                                   ),
                                 ),
@@ -888,7 +888,7 @@ class _UserFormState extends State<UserForm> {
                                   controller: _textFieldController,
                                   decoration: InputDecoration(
                                     hintText:
-                                        'Describe the incident in a few words',
+                                        'Describe the issue in a few words',
                                     fillColor: Colors.blue,
                                     labelStyle: const TextStyle(
                                       color: Colors.blue,
@@ -936,7 +936,7 @@ class _UserFormState extends State<UserForm> {
                                     children: [
                                       Flexible(
                                         child: Text(
-                                          'How severe was the incident?',
+                                          'How critical is the issue?',
                                           style: TextStyle(
                                             color: Theme.of(context)
                                                 .secondaryHeaderColor,
@@ -1009,7 +1009,9 @@ class _UserFormState extends State<UserForm> {
                           alignment: MainAxisAlignment.end,
                           children: [
                             TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                                 child: const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 12.0),
                                   child: Text('CANCEL',

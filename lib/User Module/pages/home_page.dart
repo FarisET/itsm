@@ -274,7 +274,7 @@ class _HomePage2State extends State<HomePage2> {
               ),
               // previous reports
               const Text(
-                "My Reports",
+                "My Tickets",
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
@@ -311,10 +311,10 @@ class _HomePage2State extends State<HomePage2> {
   }
 
   Future<void> uploadUserFormReports(BuildContext context) async {
-    print("uploading reports...");
+    //  print("uploading reports...");
     final pingSuccess = await ping_google();
     if (!pingSuccess) {
-      print("Connection error. Retrying later...");
+      //   print("Connection error. Retrying later...");
       return;
     }
     final dbHelper = await DatabaseHelper();
@@ -349,7 +349,7 @@ class _HomePage2State extends State<HomePage2> {
 
       if (uploadSuccess == 1) {
         await dbHelper.deleteUserFormReport(id);
-        print("Report successfully sent and deleted from local database");
+        //     print("Report successfully sent and deleted from local database");
       } else {
         print("Report failed to send. Retrying later...: error:$uploadSuccess");
       }
@@ -365,7 +365,7 @@ class _HomePage2State extends State<HomePage2> {
                 topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         builder: (_) {
           return SizedBox(
-            height: MediaQuery.sizeOf(context).height * .4,
+            height: MediaQuery.sizeOf(context).height * .2,
             child: const UserActionsModalSheet(),
           );
         });

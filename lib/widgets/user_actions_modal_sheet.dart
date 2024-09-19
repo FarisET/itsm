@@ -6,52 +6,56 @@ class UserActionsModalSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(shrinkWrap: true, children: [
-      //black divider
-      Container(
-        height: 4,
-        margin: EdgeInsets.symmetric(
-            vertical: MediaQuery.sizeOf(context).height * .015,
-            horizontal: MediaQuery.sizeOf(context).width * .4),
-        decoration: BoxDecoration(
-            color: Colors.grey, borderRadius: BorderRadius.circular(8)),
-      ),
-      IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.close)),
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * .2,
+      child: ListView(shrinkWrap: true, children: [
+        //black divider
+        Container(
+          height: 2,
+          margin: EdgeInsets.symmetric(
+              vertical: MediaQuery.sizeOf(context).height * .015,
+              horizontal: MediaQuery.sizeOf(context).width * .4),
+          decoration: BoxDecoration(
+              color: Colors.grey, borderRadius: BorderRadius.circular(8)),
+        ),
+        IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: const Icon(Icons.close)),
 
-      //report incident
-      _OptionItem(
-          icon: Icon(Icons.copy_all_rounded, color: Colors.blue[600], size: 26),
-          name: 'Report Incident',
-          description: 'Capture an incident, hazard or a feedback',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const UserForm()),
-            );
-          }),
-      Divider(
-        color: Colors.black54,
-        endIndent: MediaQuery.sizeOf(context).width * .04,
-        indent: MediaQuery.sizeOf(context).width * .04,
-      ),
-      _OptionItem(
-          // icon: Icon(Icons.copy_all_rounded, color: Colors.blue[600], size: 26),
-          icon: Icon(Icons.search_rounded, color: Colors.blue[600], size: 26),
-          name: 'Start Inspection',
-          description: 'Capture an incident, hazard',
-          onTap: () {}),
+        //report incident
+        _OptionItem(
+            icon:
+                Icon(Icons.copy_all_rounded, color: Colors.blue[600], size: 26),
+            name: 'Register Ticket',
+            description: 'get your issue resolved',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const UserForm()),
+              );
+            }),
+        Divider(
+          color: Colors.black54,
+          endIndent: MediaQuery.sizeOf(context).width * .04,
+          indent: MediaQuery.sizeOf(context).width * .04,
+        ),
+        // _OptionItem(
+        //     // icon: Icon(Icons.copy_all_rounded, color: Colors.blue[600], size: 26),
+        //     icon: Icon(Icons.search_rounded, color: Colors.blue[600], size: 26),
+        //     name: 'Start Inspection',
+        //     description: 'Capture an incident, hazard',
+        //     onTap: () {}),
 
-      //separator or divider
-      Divider(
-        color: Colors.black54,
-        endIndent: MediaQuery.sizeOf(context).width * .04,
-        indent: MediaQuery.sizeOf(context).width * .04,
-      )
-    ]);
+        //separator or divider
+        // Divider(
+        //   color: Colors.black54,
+        //   endIndent: MediaQuery.sizeOf(context).width * .04,
+        //   indent: MediaQuery.sizeOf(context).width * .04,
+        // )
+      ]),
+    );
   }
 }
 
