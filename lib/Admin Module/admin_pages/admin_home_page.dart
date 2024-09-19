@@ -207,18 +207,16 @@ class _AdminHomePageState extends State<AdminHomePage>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               user_name != null
-                                  ? Flexible(
-                                      child: Text(
-                                        '$user_name',
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                  ? Text(
+                                      '$user_name',
+                                      style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold),
                                     )
                                   : const Text(
                                       'Citizen',
                                       style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 22,
                                           fontWeight: FontWeight.bold),
                                     ),
                               SizedBox(
