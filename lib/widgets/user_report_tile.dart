@@ -12,7 +12,11 @@ class UserReportTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        //color: item.status!.contains('open') ? Colors.red[50] : (item.status!.contains('in progress') ? Colors.orange[50] : Colors.green[50]),
+        // color: userReport.status!.contains('open')
+        // ? Colors.red[50]
+        // : (userReport.status!.contains('in progress')
+        //     ? Colors.orange[50]
+        //     : Colors.green[50]),
         color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -51,11 +55,11 @@ class UserReportTile extends StatelessWidget {
                               style: TextStyle(
                                   color: userReport.incidentCriticalityLevel!
                                           .contains('minor')
-                                      ? Colors.black
+                                      ? Colors.green
                                       : (userReport.incidentCriticalityLevel!
                                               .contains('serious')
-                                          ? Colors.black
-                                          : Colors.black),
+                                          ? Colors.orange
+                                          : Colors.red),
                                   fontWeight: FontWeight.bold)),
                         ],
                       ),
@@ -151,17 +155,17 @@ class UserReportTile extends StatelessWidget {
                           userReport.status!.contains('completed')
                               ? const Text('Completed',
                                   style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.green,
                                       fontWeight: FontWeight.bold))
                               : userReport.status!.contains('in progress')
                                   ? const Text('In progress',
                                       style: TextStyle(
-                                          color: Colors.black,
+                                          color: Colors.orange,
                                           fontWeight: FontWeight.bold))
                                   : Text(
                                       '${capitalizeFirstLetter(userReport.status)}',
                                       style: const TextStyle(
-                                          color: Colors.black,
+                                          color: Colors.red,
                                           fontWeight: FontWeight.bold))
                         ],
                       ),

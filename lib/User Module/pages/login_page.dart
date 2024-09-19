@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:safify/User%20Module/pages/home_page.dart';
 import 'package:safify/db/database_helper.dart';
+import 'package:safify/services/toast_service.dart';
 import 'package:safify/utils/alerts_util.dart';
+import 'package:safify/utils/network_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Action Team Module/pages/action_team_home_page.dart';
@@ -70,92 +72,101 @@ class _LoginPageState extends State<LoginPage> {
           // ),
           Form(
             key: _formKey,
-            child: Column(
-              children: [
-                Image.asset(
-                  'assets/images/safify_logo.png',
-                  width: 300,
-                  height: 300,
-                ),
-                const SizedBox(
-                  height: 0,
-                ),
-                const Text(
-                  'Login',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                makeInput(
-                  label: 'Enter your registered id',
-                  controller_val: cuserid,
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                makeInput(
-                    label: 'Enter password',
-                    controller_val: cpassword,
-                    obscureText: true),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: OverflowBar(
-                    alignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                          onPressed: () {
-                            closeApp();
-                          },
-                          child: const Text('CANCEL')),
-                      SizedBox(
-                        height: MediaQuery.sizeOf(context).height * 0.05,
-                        // width: MediaQuery.sizeOf(context).height * 0.1,
-                        child: ElevatedButton(
-                            onPressed: isSubmitting
-                                ? null
-                                : () {
-                                    if (_formKey.currentState!.validate()) {
-                                      handleLoginButton(context);
-                                    }
-                                  },
-                            child: isSubmitting
-                                ? Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text('Loading'),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.sizeOf(context).height *
-                                                0.025,
-                                        width:
-                                            MediaQuery.sizeOf(context).height *
-                                                0.025,
-                                        child: const CircularProgressIndicator(
-                                          color: Colors.grey,
-                                          // strokeWidth: 3,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : const Text('Login')),
-                      )
-                    ],
-                  ),
-                ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    Text(
-                      "BETA - Version 1.0",
-                      style: TextStyle(color: Colors.grey),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                    Image.asset(
+                      'assets/images/safify_logo.png',
+                      width: MediaQuery.of(context).size.height * 0.3,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                    const Text(
+                      'Login',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    makeInput(
+                      label: 'Enter your registered id',
+                      controller_val: cuserid,
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    ),
+                    makeInput(
+                        label: 'Enter password',
+                        controller_val: cpassword,
+                        obscureText: true),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: OverflowBar(
+                        alignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                closeApp();
+                              },
+                              child: const Text('CANCEL')),
+                          SizedBox(
+                            height: MediaQuery.sizeOf(context).height * 0.05,
+                            // width: MediaQuery.sizeOf(context).height * 0.1,
+                            child: ElevatedButton(
+                                onPressed: isSubmitting
+                                    ? null
+                                    : () {
+                                        if (_formKey.currentState!.validate()) {
+                                          handleLoginButton(context);
+                                        }
+                                      },
+                                child: isSubmitting
+                                    ? Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Text('Loading'),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.sizeOf(context)
+                                                    .height *
+                                                0.025,
+                                            width: MediaQuery.sizeOf(context)
+                                                    .height *
+                                                0.025,
+                                            child:
+                                                const CircularProgressIndicator(
+                                              color: Colors.grey,
+                                              // strokeWidth: 3,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : const Text('Login')),
+                          )
+                        ],
+                      ),
+                    ),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Release - Version 1.1909",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           )
         ]),
@@ -196,6 +207,16 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       isSubmitting = true;
     });
+
+    final ping = await ping_google();
+
+    if (!ping) {
+      ToastService.showNoConnectionSnackBar(context);
+      setState(() {
+        isSubmitting = false;
+      });
+      return;
+    }
 
     UserServices userServices = UserServices();
     final result = await userServices.login(

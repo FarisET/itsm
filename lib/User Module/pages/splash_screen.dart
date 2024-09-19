@@ -30,7 +30,11 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
-              child: Image.asset('assets/images/safify_logo.png'),
+              child: Image.asset(
+                'assets/images/safify_logo.png',
+                width: MediaQuery.of(context).size.height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.4,
+              ),
             ),
             Lottie.asset(
               'assets/images/loading_lottie.json',
