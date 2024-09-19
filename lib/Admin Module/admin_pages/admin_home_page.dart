@@ -298,10 +298,10 @@ class _AdminHomePageState extends State<AdminHomePage>
                     controller: _tabController,
                     tabs: const <Widget>[
                       Tab(
-                        text: 'User Reports',
+                        text: 'Tickets',
                       ),
                       Tab(
-                        text: 'Action Reports',
+                        text: 'Approvals',
                       ),
                     ],
                   ),

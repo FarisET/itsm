@@ -145,7 +145,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     color: Colors.black,
                     size: 31,
                   ),
-                  title: const Text('Total Incidents Reported'),
+                  title: const Text('Total Tickets this Year'),
                   trailing: CircleAvatar(
                     maxRadius: 16,
                     backgroundColor: Theme.of(context).cardColor,
@@ -173,7 +173,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     color: Colors.black,
                     size: 31,
                   ),
-                  title: const Text('Total Incidents Resolved'),
+                  title: const Text('Tickets Closed this Year'),
                   trailing: CircleAvatar(
                     maxRadius: 16,
                     backgroundColor: Theme.of(context).cardColor,
@@ -231,7 +231,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         size: 31,
                       ),
                       Text(
-                        'Types of Incidents Breakdown',
+                        '',
                         style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                       Text('')
@@ -240,7 +240,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   SizedBox(
                     height: 200,
                     child: SfCircularChart(
-                      title: const ChartTitle(text: 'Incident Subtypes'),
+                      title: const ChartTitle(text: 'Tickets by Category'),
                       legend: const Legend(isVisible: true),
                       series: <CircularSeries>[
                         PieSeries<CountByIncidentSubTypes, String>(
@@ -298,7 +298,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         size: 31,
                       ),
                       Text(
-                        'Incidents Breakdown by Location',
+                        '',
                         style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                       Text('')
@@ -307,7 +307,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   SizedBox(
                     height: 200,
                     child: SfCircularChart(
-                      title: const ChartTitle(text: 'Incident Locations'),
+                      title: const ChartTitle(text: 'Tickets by Location'),
                       legend: const Legend(isVisible: true),
                       series: <CircularSeries>[
                         PieSeries<CountByLocation, String>(
@@ -367,7 +367,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       size: 31,
                     ),
                     Text(
-                      'Action Team Efficiencies',
+                      '',
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                     Text('')
@@ -377,7 +377,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   height: 200,
                   child: SfCartesianChart(
                     primaryXAxis: const CategoryAxis(),
-                    title: const ChartTitle(text: 'Team Efficiency'),
+                    title: const ChartTitle(text: 'Support Team Efficiency'),
                     series: <CartesianSeries>[
                       BarSeries<ActionTeamEfficiency, String>(
                         dataSource: data,
