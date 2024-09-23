@@ -1,23 +1,23 @@
 class SolutionForum {
   final String problem;
   final String solution;
-  //final List<Step> steps;
+  final List<Step> steps;
 
   SolutionForum({
     required this.problem,
     required this.solution,
-    // required this.steps,
+    required this.steps,
   });
 
   factory SolutionForum.fromJson(Map<String, dynamic> json) {
-    //var stepsJson = json['steps'] as List;
-    // List<Step> stepsList =
-    //     stepsJson.map((step) => Step.fromJson(step)).toList();
+    var stepsJson = json['steps'] as List;
+    List<Step> stepsList =
+        stepsJson.map((step) => Step.fromJson(step)).toList();
 
     return SolutionForum(
       problem: json['Problem'] ?? '',
       solution: json['Solution'] ?? '',
-      // steps: stepsList,
+      steps: stepsList,
     );
   }
 
@@ -30,16 +30,16 @@ class SolutionForum {
   // }
 }
 
-// class Step {
-//   final String stepKey;
-//   final String stepValue;
+class Step {
+  final String stepKey;
+  final String stepValue;
 
-//   Step({required this.stepKey, required this.stepValue});
+  Step({required this.stepKey, required this.stepValue});
 
-//   factory Step.fromJson(Map<String, dynamic> json) {
-//     return Step(
-//       stepKey: json.keys.first, // Get the key dynamically
-//       stepValue: json.values.first, // Get the value dynamically
-//     );
-//   }
-// }
+  factory Step.fromJson(Map<String, dynamic> json) {
+    return Step(
+      stepKey: json.keys.first, // Get the key dynamically
+      stepValue: json.values.first, // Get the value dynamically
+    );
+  }
+}

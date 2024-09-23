@@ -40,6 +40,91 @@ class _SearchSolutionForumState extends State<SearchSolutionForum> {
     });
   }
 
+  void showStepsModal(SolutionForum forum) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height *
+              0.43, // Set height to 70% of the screen height
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Steps',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              Expanded(
+                child: forum.steps.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: forum.steps.length,
+                        itemBuilder: (context, index) {
+                          final step = forum.steps[index];
+                          bool isLastStep = index == forum.steps.length - 1;
+
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                children: [
+                                  // Circle with step number
+                                  CircleAvatar(
+                                    radius: 12, // Adjust size as needed
+                                    backgroundColor:
+                                        Colors.blue, // Customize as needed
+                                    child: Text(
+                                      '${index + 1}', // Step number
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                  if (!isLastStep) ...[
+                                    // Connecting vertical line for all except the last step
+                                    Container(
+                                      width: 2, // Line width
+                                      height: 40, // Line height
+                                      color: Colors.blue, // Customize as needed
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              const SizedBox(width: 10),
+                              // Step key and value
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      step.stepValue, // Step title/key
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    // Text(step
+                                    //     .stepValue), // Step value/description
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      )
+                    : const Center(child: Text('No steps available')),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<SearchSolutionForumProvider>(context);
@@ -66,7 +151,7 @@ class _SearchSolutionForumState extends State<SearchSolutionForum> {
               },
             ),
             title: Text(
-              'Search Solution Forum',
+              'Solution Forum',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -132,6 +217,12 @@ class _SearchSolutionForumState extends State<SearchSolutionForum> {
                                 child: ListTile(
                                   title: Text(forum.problem),
                                   subtitle: Text(forum.solution ?? ''),
+                                  trailing: TextButton(
+                                    child: Text('View Steps'),
+                                    onPressed: () => showStepsModal(forum),
+                                  ),
+                                  onTap: () => showStepsModal(
+                                      forum), // Show modal on tap
                                 ),
                               );
                             },
