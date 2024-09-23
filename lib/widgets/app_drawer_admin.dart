@@ -5,7 +5,7 @@ import 'package:safify/Admin%20Module/admin_pages/add_incident_type_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/add_location_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/add_subincident_type.dart';
 import 'package:safify/Admin%20Module/admin_pages/add_sublocation_page.dart';
-import 'package:safify/Admin%20Module/admin_pages/search_knowledge_base_page.dart';
+import 'package:safify/Admin%20Module/admin_pages/search_solution_forum_page.dart';
 import 'package:safify/Admin%20Module/providers/announcement_provider.dart';
 import 'package:safify/models/announcement_notif.dart';
 import 'package:safify/services/pdf_download_service.dart';
@@ -258,7 +258,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const SearchKnowledgeBase()));
+                        builder: (context) => const SearchSolutionForum()));
                   },
                 ),
               ],
