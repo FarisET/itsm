@@ -157,7 +157,7 @@ class _ActionReportState extends State<ActionReportForm>
               )),
               Tab(
                   child: Text(
-                ("Root Cause Analysis"),
+                ("Solution Steps"),
                 style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
               )),
               Tab(
@@ -352,7 +352,7 @@ class _ActionReportState extends State<ActionReportForm>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Text(
-                                  'Answer the series of questions to find the root cause of the incident',
+                                  'Add the steps you took in order to resolve the issue',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
@@ -361,7 +361,7 @@ class _ActionReportState extends State<ActionReportForm>
                                       MediaQuery.sizeOf(context).height * 0.01,
                                 ),
                                 Text(
-                                  'Note: The root cause is the underlying reason for the incident. It is the cause that, if corrected, would prevent the incident from happening again. The five whys technique is a simple but effective tool for uncovering the root cause of a problem.',
+                                  'Note: Steps can be a minimum of 1 and a maximum of 5. Provide a short description of each step clearly for future references.',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color: Colors.grey.shade600,
@@ -393,14 +393,14 @@ class _ActionReportState extends State<ActionReportForm>
                           },
                           steps: [
                             Step(
-                              title: const Text("Problem Statement"),
+                              title: const Text("Step 1"),
                               content: Column(
                                 children: [
                                   TextFormField(
                                     controller: rootCauseController1,
                                     decoration: const InputDecoration(
-                                      labelText: 'what is the problem?',
-                                      hintText: 'define in one line',
+                                      labelText: 'first step',
+                                      hintText: 'describe in one line',
                                     ),
                                   ),
                                 ],
@@ -408,15 +408,14 @@ class _ActionReportState extends State<ActionReportForm>
                               isActive: _currentStep == 0,
                             ),
                             Step(
-                              title: const Text("Why is that?"),
+                              title: const Text("Step 2"),
                               content: Column(
                                 children: [
                                   TextFormField(
                                     controller: rootCauseController2,
                                     decoration: const InputDecoration(
-                                      labelText:
-                                          'why do you think it happened?',
-                                      hintText: 'what caused it?',
+                                      labelText: 'next step',
+                                      hintText: 'describe in one line',
                                     ),
                                   ),
                                 ],
@@ -424,15 +423,14 @@ class _ActionReportState extends State<ActionReportForm>
                               isActive: _currentStep == 1,
                             ),
                             Step(
-                              title: const Text("Why is that?"),
+                              title: const Text("Step 3"),
                               content: Column(
                                 children: [
                                   TextFormField(
                                     controller: rootCauseController3,
                                     decoration: const InputDecoration(
-                                      labelText:
-                                          'why do you think that happened?',
-                                      hintText: 'Cause of previous cause',
+                                      labelText: 'next step',
+                                      hintText: 'describe in one line',
                                     ),
                                   ),
                                 ],
@@ -440,15 +438,14 @@ class _ActionReportState extends State<ActionReportForm>
                               isActive: _currentStep == 2,
                             ),
                             Step(
-                              title: const Text("Why is that?"),
+                              title: const Text("Step 4"),
                               content: Column(
                                 children: [
                                   TextFormField(
                                     controller: rootCauseController4,
                                     decoration: const InputDecoration(
-                                      labelText:
-                                          'why do you think that happened?',
-                                      hintText: 'Cause of previous cause',
+                                      labelText: 'next step',
+                                      hintText: 'describe in one line',
                                     ),
                                   ),
                                 ],
@@ -456,14 +453,14 @@ class _ActionReportState extends State<ActionReportForm>
                               isActive: _currentStep == 3,
                             ),
                             Step(
-                              title: const Text("Root Cause"),
+                              title: const Text("Step 5"),
                               content: Column(
                                 children: [
                                   TextFormField(
                                     controller: rootCauseController5,
                                     decoration: const InputDecoration(
-                                      labelText: 'why is that?',
-                                      hintText: 'cause of previous cause',
+                                      labelText: 'last step',
+                                      hintText: 'describe in one line',
                                     ),
                                   ),
                                 ],
