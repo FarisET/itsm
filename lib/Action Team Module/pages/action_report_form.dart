@@ -274,36 +274,52 @@ class _ActionReportState extends State<ActionReportForm>
                         ),
                         Padding(
                           padding: const EdgeInsets.all(20.0),
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: OutlinedButton(
-                              style: ElevatedButton.styleFrom(
-                                side: const BorderSide(color: Colors.blue),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                ),
+                          child: Column(
+                            children: [
+                              Text(
+                                'Note: Please attach a relevant screenshot that supports the resolution process. Ensure all attachments are clearly labeled for easy reference.',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic),
                               ),
-                              onPressed: () {
-                                _showBottomSheet1();
-                              },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 22.0),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.image),
-                                    Flexible(
-                                      child: Text(
-                                        incidentSiteImg != null
-                                            ? 'Image Added'
-                                            : 'Add Image of enviroment',
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.sizeOf(context).height * 0.01,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: OutlinedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    side: const BorderSide(color: Colors.blue),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
                                     ),
-                                  ],
+                                  ),
+                                  onPressed: () {
+                                    _showBottomSheet1();
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 22.0),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.image),
+                                        Flexible(
+                                          child: Text(
+                                            incidentSiteImg != null
+                                                ? 'Attachment Added'
+                                                : ' Add Attachment',
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
                         Padding(
