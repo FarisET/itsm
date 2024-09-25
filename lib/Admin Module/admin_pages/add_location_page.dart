@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Required for LengthLimitingTextInputFormatter
+import 'package:provider/provider.dart';
+import 'package:safify/User%20Module/providers/location_provider.dart';
 import 'package:safify/api/locations_data_service.dart';
 import 'package:safify/services/toast_service.dart';
 
@@ -20,6 +22,11 @@ class _AddLocationPageState extends State<AddLocationPage> {
     super.dispose();
   }
 
+  @override
+  void initstate() {
+    Provider.of<LocationProvider>(context, listen: false).fetchLocations();
+  }
+
   void _showConfirmationDialog(String locationName) {
     showDialog(
       context: context,
@@ -37,60 +44,98 @@ class _AddLocationPageState extends State<AddLocationPage> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Add Location'),
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back,
+                color: Theme.of(context).secondaryHeaderColor),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          title: Text(
+            "Add Location",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Theme.of(context).secondaryHeaderColor,
+            ),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisSize: MainAxisSize.max,
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10.0),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              CupertinoIcons.location_solid,
-                              color: Colors.black,
-                              size: 20.0,
-                            ),
-                            const SizedBox(width: 10.0),
-                            Text("New Location Name",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                )),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      TextField(
-                        autofocus: true,
-                        controller: _locationController,
-                        textInputAction: TextInputAction.done,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(50),
-                        ],
-                        decoration: InputDecoration(
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                          fillColor: Colors.white,
-                          filled: true,
-                          labelText: 'New Location Name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        textCapitalization: TextCapitalization.words,
-                      ),
-                    ],
-                  ),
+              const SizedBox(height: 10.0),
+              const Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: Row(
+                  children: [
+                    Icon(CupertinoIcons.location_solid,
+                        color: Colors.black, size: 20.0),
+                    SizedBox(width: 10.0),
+                    Text(
+                      "New Location Name",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(height: 10.0),
+              TextField(
+                autofocus: true,
+                controller: _locationController,
+                textInputAction: TextInputAction.done,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(50),
+                ],
+                decoration: InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  fillColor: Colors.white,
+                  filled: true,
+                  labelText: 'New Location Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                textCapitalization: TextCapitalization.words,
+              ),
+              const SizedBox(height: 20.0),
+
+              // ListView for displaying fetched locations
+              Expanded(
+                child: Consumer<LocationProvider>(
+                  builder: (context, locationProvider, child) {
+                    if (locationProvider.allLocations == null) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (locationProvider.allLocations!.isEmpty) {
+                      return const Center(
+                          child: Text('No locations available.'));
+                    }
+                    return ListView.builder(
+                      itemCount: locationProvider.allLocations!.length,
+                      itemBuilder: (context, index) {
+                        final location = locationProvider.allLocations![index];
+                        return ListTile(
+                          title: Text(location
+                              .locationName), // Assuming location has a 'name' field
+                          onTap: () {
+                            locationProvider.setLocation(location.locationName);
+                          },
+                          selected: locationProvider.selectedLocation ==
+                              location.locationName,
+                          selectedTileColor: Colors.grey[300],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20.0),
+
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -107,8 +152,9 @@ class _AddLocationPageState extends State<AddLocationPage> {
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            duration: Duration(seconds: 1),
-                            content: Text('Please enter a location name')),
+                          duration: Duration(seconds: 1),
+                          content: Text('Please enter a location name'),
+                        ),
                       );
                     }
                   },
