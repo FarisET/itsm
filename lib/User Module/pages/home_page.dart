@@ -334,14 +334,16 @@ class _HomePage2State extends State<HomePage2> {
               report.incidentSubtypeId,
               report.description,
               report.date,
-              report.criticalityId);
+              report.criticalityId,
+              report.assetNo);
         } else {
           uploadSuccess = await reportService.postReport(
               report.sublocationId,
               report.incidentSubtypeId,
               report.description,
               report.date,
-              report.criticalityId);
+              report.criticalityId,
+              report.assetNo);
         }
       } catch (e) {
         rethrow;

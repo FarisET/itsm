@@ -1,21 +1,20 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:safify/User%20Module/pages/home_page.dart';
+import 'package:safify/User%20Module/providers/asset_provider.dart';
 import 'package:safify/User%20Module/providers/user_reports_provider.dart';
 import 'package:safify/db/database_helper.dart';
+import 'package:safify/models/asset.dart';
+import 'package:safify/models/asset_type.dart';
 import 'package:safify/models/location.dart';
 import 'package:safify/models/user_report_form_details.dart';
 import 'package:safify/services/toast_service.dart';
-import 'package:safify/utils/alerts_util.dart';
 import 'package:safify/utils/file_utils.dart';
 import 'package:safify/utils/network_util.dart';
-import 'package:safify/widgets/drawing_canvas_utils.dart';
 import 'package:safify/widgets/image_utils.dart';
 
 import '../../models/sub_location.dart';
@@ -29,7 +28,6 @@ import '../providers/incident_type_provider.dart';
 import '../providers/location_provider.dart';
 import '../providers/sub_location_provider.dart';
 import '../../services/report_service.dart';
-import 'home.dart';
 
 class UserForm extends StatefulWidget {
   const UserForm({super.key});
@@ -56,6 +54,8 @@ class _UserFormState extends State<UserForm> {
   bool _isEditing = false;
   ImageStream? _imageStream;
   bool isSubmitting = false;
+  String? selectedAssetType;
+  String? selectedAssetSubType;
 
   void _processData() {
     if (mounted) {
@@ -115,9 +115,19 @@ class _UserFormState extends State<UserForm> {
 
   DropdownMenuItem<String> buildSubLocationMenuItem(SubLocation type) {
     return DropdownMenuItemUtil.buildDropdownMenuItem<SubLocation>(
-        type, type.sublocationId, type.sublocationName
-        // Add the condition to check if it's selected based on your logic
-        );
+        type, type.sublocationId, type.sublocationName);
+  }
+
+  DropdownMenuItem<String> buildAssetMenuItem(AssetType type) {
+    return DropdownMenuItemUtil.buildDropdownMenuItem<AssetType>(
+        type, type.assetTypeId.toString(), type.assetTypeDesc);
+  }
+
+  DropdownMenuItem<String> buildSubAssetMenuItem(Asset type) {
+    return DropdownMenuItemUtil.buildDropdownMenuItem<Asset>(
+        type,
+        type.assetNo.toString() ?? 'n/a',
+        type.assetName.toString() ?? 'No Name');
   }
 
   void _editImage() {
@@ -138,10 +148,13 @@ class _UserFormState extends State<UserForm> {
       }
 
       Provider.of<LocationProvider>(context, listen: false).fetchLocations();
-      if (SelectedIncidentType != null) {
+      if (SelectedLocationType != null) {
         Provider.of<SubLocationProviderClass>(context, listen: false)
             .getSubLocationPostData(SelectedLocationType!);
       }
+
+      Provider.of<AssetProviderClass>(context, listen: false)
+          .fetchAssetTypesandSubTypes();
     });
   }
 
@@ -204,7 +217,7 @@ class _UserFormState extends State<UserForm> {
               Navigator.of(context).pop();
             },
           ),
-          title: Text("Register Support",
+          title: Text("Register Ticket",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -258,17 +271,27 @@ class _UserFormState extends State<UserForm> {
                                   ),
                                 ),
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Text(
-                                    'Categorize your issue',
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .secondaryHeaderColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Categorize your issue',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .secondaryHeaderColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const Text(
+                                          '*',
+                                          style: TextStyle(
+                                            color: Colors
+                                                .red, // Set the asterisk color to red
+                                          ),
+                                        ),
+                                      ],
+                                    )),
                                 Consumer<IncidentProviderClass>(
                                   builder: (context, selectedVal, child) {
                                     if (selectedVal.loading) {
@@ -317,31 +340,15 @@ class _UserFormState extends State<UserForm> {
                                                         .symmetric(
                                                         horizontal: 10.0,
                                                         vertical: 8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          'Support Category',
-                                                          style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .secondaryHeaderColor,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          ' (required)',
-                                                          style: TextStyle(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .hintColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              fontSize: 12),
-                                                        )
-                                                      ],
+                                                    child: Text(
+                                                      'Support Category',
+                                                      style: TextStyle(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .secondaryHeaderColor,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontSize: 14),
                                                     ),
                                                   ),
                                                 ),
@@ -426,37 +433,34 @@ class _UserFormState extends State<UserForm> {
                                                     value:
                                                         null, // Placeholder value
                                                     child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10.0,
-                                                          vertical: 8.0),
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            'Sub Category',
-                                                            style: TextStyle(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .secondaryHeaderColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                    10.0,
+                                                                vertical: 8.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'Sub Category',
+                                                              style: TextStyle(
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .secondaryHeaderColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  fontSize: 14),
                                                             ),
-                                                          ),
-                                                          Text(
-                                                            ' (required)',
-                                                            style: TextStyle(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .hintColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                fontSize: 12),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
+                                                            const Text(
+                                                              '*',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .red, // Set the asterisk color to red
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )),
                                                   ),
                                                   if (selectedValue
                                                           .subIncidentPost !=
@@ -484,35 +488,175 @@ class _UserFormState extends State<UserForm> {
                                           style: TextStyle(
                                             color: Colors.red,
                                           ));
-
-                                      // return Container(
-                                      //     width: double.infinity,
-                                      //     decoration: BoxDecoration(
-                                      //       color: Colors.grey[100],
-                                      //       border:
-                                      //           Border.all(color: Colors.grey),
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(5),
-                                      //     ),
-                                      //     child: Padding(
-                                      //       padding: const EdgeInsets.symmetric(
-                                      //           horizontal: 5.0, vertical: 12),
-                                      //       child: Row(
-                                      //         mainAxisAlignment:
-                                      //             MainAxisAlignment.spaceBetween,
-                                      //         children: const [
-                                      // Text(
-                                      //     'Please select a incident first',
-                                      //     style: TextStyle(
-                                      //       color: Colors.grey,
-                                      //     )),
-                                      //           Icon(Icons.arrow_drop_down,
-                                      //               color: Colors.grey)
-                                      //         ],
-                                      //       ),
-                                      //     ));
                                     }
                                   }),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02,
+                        ),
+                        Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(22.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Associate Asset',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .secondaryHeaderColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const Text(
+                                          '*',
+                                          style: TextStyle(
+                                            color: Colors
+                                                .red, // Set the asterisk color to red
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                Consumer<AssetProviderClass>(
+                                  builder: (context, assetProvider, child) {
+                                    if (assetProvider.loading) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else {
+                                      return Column(
+                                        children: [
+                                          // Dropdown for Asset Types
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: Theme.of(context)
+                                                    .highlightColor,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: DropdownButton<String>(
+                                              value: assetProvider
+                                                  .selectedAssetType,
+                                              isExpanded: true,
+                                              icon: Icon(Icons.arrow_drop_down,
+                                                  color: Theme.of(context)
+                                                      .secondaryHeaderColor),
+                                              underline: Container(),
+                                              items: [
+                                                DropdownMenuItem<String>(
+                                                  value: null,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10.0,
+                                                        vertical: 8.0),
+                                                    child: Text(
+                                                      'Select Asset Type',
+                                                      style: TextStyle(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .secondaryHeaderColor,
+                                                          fontSize: 14),
+                                                    ),
+                                                  ),
+                                                ),
+                                                if (assetProvider
+                                                        .assetTypeList !=
+                                                    null)
+                                                  ...assetProvider
+                                                      .assetTypeList!
+                                                      .map((type) {
+                                                    return buildAssetMenuItem(
+                                                        type);
+                                                  }).toList(),
+                                              ],
+                                              onChanged: (value) {
+                                                assetProvider
+                                                    .setSelectedAssetType(
+                                                        value);
+                                                selectedAssetType = value;
+                                                assetProvider
+                                                    .setSelectedAssetSubtype(
+                                                        null); // Reset Sub Type
+                                                setState(() {});
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          // Dropdown for Asset Sub Types (Filtered Assets)
+                                          if (selectedAssetType != null)
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: Theme.of(context)
+                                                      .highlightColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: DropdownButton<String>(
+                                                value: assetProvider
+                                                    .selectedAssetSubtype,
+                                                isExpanded: true,
+                                                icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: Theme.of(context)
+                                                        .secondaryHeaderColor),
+                                                underline: Container(),
+                                                items: [
+                                                  DropdownMenuItem<String>(
+                                                    value: null,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10.0,
+                                                          vertical: 8.0),
+                                                      child: Text(
+                                                        'Select Asset',
+                                                        style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .secondaryHeaderColor,
+                                                            fontSize: 14),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  if (selectedAssetType != null)
+                                                    ...assetProvider
+                                                        .getFilteredAssets(
+                                                            selectedAssetType)
+                                                        .map((asset) {
+                                                      return buildSubAssetMenuItem(
+                                                          asset);
+                                                    }).toList(),
+                                                ],
+                                                onChanged: (value) {
+                                                  assetProvider
+                                                      .setSelectedAssetSubtype(
+                                                          value);
+                                                  selectedAssetSubType = value;
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    }
+                                  },
+                                ),
                               ],
                             ),
                           ),
@@ -533,17 +677,27 @@ class _UserFormState extends State<UserForm> {
                                   padding: EdgeInsets.only(left: 12),
                                 ),
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Text(
-                                    'Where are you located?',
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .secondaryHeaderColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Where are you located?',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .secondaryHeaderColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const Text(
+                                          '*',
+                                          style: TextStyle(
+                                            color: Colors
+                                                .red, // Set the asterisk color to red
+                                          ),
+                                        ),
+                                      ],
+                                    )),
                                 Consumer<LocationProvider>(
                                   builder: (context, selectedVal, child) {
                                     if (selectedVal.loading) {
@@ -588,37 +742,32 @@ class _UserFormState extends State<UserForm> {
                                                   value:
                                                       null, // Placeholder value
                                                   child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 10.0,
-                                                        vertical: 8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          'Support Location',
-                                                          style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .secondaryHeaderColor,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10.0,
+                                                          vertical: 8.0),
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            'Support Location',
+                                                            style: TextStyle(
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .secondaryHeaderColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                fontSize: 14),
                                                           ),
-                                                        ),
-                                                        Text(
-                                                          ' (required)',
-                                                          style: TextStyle(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .hintColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              fontSize: 12),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
+                                                          const Text(
+                                                            '*',
+                                                            style: TextStyle(
+                                                              color: Colors
+                                                                  .red, // Set the asterisk color to red
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )),
                                                 ),
                                                 if (selectedVal.allLocations !=
                                                     null)
@@ -705,31 +854,16 @@ class _UserFormState extends State<UserForm> {
                                                           .symmetric(
                                                           horizontal: 10.0,
                                                           vertical: 8.0),
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            'Sub Location',
-                                                            style: TextStyle(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .secondaryHeaderColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            ' (required)',
-                                                            style: TextStyle(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .hintColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                fontSize: 12),
-                                                          )
-                                                        ],
+                                                      child: Text(
+                                                        'Sub Location',
+                                                        style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .secondaryHeaderColor,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            fontSize: 14),
                                                       ),
                                                     ),
                                                   ),
@@ -783,24 +917,18 @@ class _UserFormState extends State<UserForm> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 22, vertical: 8.0),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Add image of the incident',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .secondaryHeaderColor,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                  child: Align(
+                                    alignment: Alignment
+                                        .centerLeft, // Align the text to the left
+
+                                    child: Text(
+                                      'Add image of the issue',
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .secondaryHeaderColor,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      Text(
-                                        ' (optional)',
-                                        style: TextStyle(
-                                            color: Theme.of(context).hintColor,
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 12),
-                                      )
-                                    ],
+                                    ),
                                   ),
                                 ),
                                 Padding(
@@ -812,13 +940,9 @@ class _UserFormState extends State<UserForm> {
                                         child: Builder(builder: (context) {
                                           return ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              // primary
-                                              // : returnedImage == null
-                                              //     ? Theme.of(context).primaryColor
-                                              //     : Theme.of(context).hintColor,
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    10.0), // Set your desired radius here
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
                                               ),
                                             ),
                                             onPressed: () {
@@ -1033,7 +1157,8 @@ class _UserFormState extends State<UserForm> {
                                           isFirstLocationDropdownSelected &&
                                           isRiskLevelSelected &&
                                           (incidentSubType != '') &&
-                                          (SelectedSubLocationType != '')) {
+                                          (SelectedSubLocationType != '') &&
+                                          (selectedAssetSubType != '')) {
                                         print("pressed");
                                         int flag = await handleReportSubmitted(
                                             context, this, _imageFile);
@@ -1425,13 +1550,13 @@ class _UserFormState extends State<UserForm> {
           : null;
 
       final userFormReport = UserReportFormDetails(
-        sublocationId: userFormState.SelectedSubLocationType,
-        incidentSubtypeId: userFormState.incidentSubType,
-        description: userFormState.description,
-        date: userFormState.date,
-        criticalityId: userFormState.risklevel,
-        imagePath: tempImgPath,
-      );
+          sublocationId: userFormState.SelectedSubLocationType,
+          incidentSubtypeId: userFormState.incidentSubType,
+          description: userFormState.description,
+          date: userFormState.date,
+          criticalityId: userFormState.risklevel,
+          imagePath: tempImgPath,
+          assetNo: userFormState.selectedAssetSubType!);
 
       final dbHelper = DatabaseHelper();
       await dbHelper.insertUserFormReport(userFormReport);
@@ -1448,13 +1573,13 @@ class _UserFormState extends State<UserForm> {
       try {
         ReportServices reportServices = ReportServices();
         int flag = await reportServices.uploadReportWithImage(
-          userFormState._imageFile?.path,
-          userFormState.SelectedSubLocationType,
-          userFormState.incidentSubType,
-          userFormState.description,
-          userFormState.date,
-          userFormState.risklevel,
-        );
+            userFormState._imageFile?.path,
+            userFormState.SelectedSubLocationType,
+            userFormState.incidentSubType,
+            userFormState.description,
+            userFormState.date,
+            userFormState.risklevel,
+            userFormState.selectedAssetSubType!);
         setState(() {
           isSubmitting = false;
         });
@@ -1464,13 +1589,13 @@ class _UserFormState extends State<UserForm> {
         final tempImgPath = await saveImageTempLocally(File(_imageFile!.path));
 
         final userFormReport = UserReportFormDetails(
-          sublocationId: userFormState.SelectedSubLocationType,
-          incidentSubtypeId: userFormState.incidentSubType,
-          description: userFormState.description,
-          date: userFormState.date,
-          criticalityId: userFormState.risklevel,
-          imagePath: tempImgPath,
-        );
+            sublocationId: userFormState.SelectedSubLocationType,
+            incidentSubtypeId: userFormState.incidentSubType,
+            description: userFormState.description,
+            date: userFormState.date,
+            criticalityId: userFormState.risklevel,
+            imagePath: tempImgPath,
+            assetNo: userFormState.selectedAssetSubType!);
 
         final dbHelper = DatabaseHelper();
         await dbHelper.insertUserFormReport(userFormReport);
@@ -1485,25 +1610,25 @@ class _UserFormState extends State<UserForm> {
       try {
         ReportServices reportServices = ReportServices();
         int flag = await reportServices.postReport(
-          userFormState.SelectedSubLocationType,
-          userFormState.incidentSubType,
-          userFormState.description,
-          userFormState.date,
-          userFormState.risklevel,
-        );
+            userFormState.SelectedSubLocationType,
+            userFormState.incidentSubType,
+            userFormState.description,
+            userFormState.date,
+            userFormState.risklevel,
+            userFormState.selectedAssetSubType!);
         setState(() {
           isSubmitting = false;
         });
         return flag;
       } catch (e) {
         final userFormReport = UserReportFormDetails(
-          sublocationId: userFormState.SelectedSubLocationType,
-          incidentSubtypeId: userFormState.incidentSubType,
-          description: userFormState.description,
-          date: userFormState.date,
-          criticalityId: userFormState.risklevel,
-          imagePath: null,
-        );
+            sublocationId: userFormState.SelectedSubLocationType,
+            incidentSubtypeId: userFormState.incidentSubType,
+            description: userFormState.description,
+            date: userFormState.date,
+            criticalityId: userFormState.risklevel,
+            imagePath: null,
+            assetNo: userFormState.selectedAssetSubType!);
         final dbHelper = DatabaseHelper();
         await dbHelper.insertUserFormReport(userFormReport);
         setState(() {

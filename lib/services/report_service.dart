@@ -204,8 +204,13 @@ class ReportServices {
     }
   }
 
-  Future<int> postReport(String sublocation, String incidentSubType,
-      String description, DateTime date, String risklevel) async {
+  Future<int> postReport(
+      String sublocation,
+      String incidentSubType,
+      String description,
+      DateTime date,
+      String risklevel,
+      String assetNo) async {
     try {
       jwtToken = await storage.read(key: 'jwt');
 
@@ -231,7 +236,8 @@ class ReportServices {
                 .toLocal()
                 .toIso8601String()
                 .split(".")[0], // Serialize DateTime to string
-            "incident_criticality_id": risklevel
+            "incident_criticality_id": risklevel,
+            "asset_no": assetNo
           },
         ),
       );
@@ -268,7 +274,8 @@ class ReportServices {
       String incidentSubtypeId,
       String description,
       DateTime date,
-      String criticalityId) async {
+      String criticalityId,
+      String assetNo) async {
     jwtToken = await storage.read(key: 'jwt');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -287,7 +294,7 @@ class ReportServices {
       request.fields['sub_location_id'] = sublocationId;
       request.fields['incident_subtype_id'] = incidentSubtypeId;
       request.fields['incident_criticality_id'] = criticalityId;
-
+      request.fields['asset_no'] = assetNo;
       request.files.add(await http.MultipartFile.fromPath(
         'image',
         // imageFile.path,

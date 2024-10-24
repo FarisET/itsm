@@ -13,6 +13,7 @@ import 'package:safify/Admin%20Module/providers/fetch_countOfLocations_provider%
 import 'package:safify/Admin%20Module/providers/search_solution_forum_provider.dart';
 import 'package:safify/User%20Module/pages/home_page.dart';
 import 'package:safify/User%20Module/pages/splash_screen.dart';
+import 'package:safify/User%20Module/providers/asset_provider.dart';
 import 'package:safify/db/background_task_manager.dart';
 import 'package:safify/services/UserServices.dart';
 import 'package:safify/services/message_handler.dart';
@@ -220,6 +221,8 @@ class MyApp extends StatelessWidget {
             create: (context) => AllActionTeamProviderClass()),
         ChangeNotifierProvider<SearchSolutionForumProvider>(
             create: (context) => SearchSolutionForumProvider()),
+        ChangeNotifierProvider<AssetProviderClass>(
+            create: (context) => AssetProviderClass()),
         ChangeNotifierProvider<AnnouncementProvider>(
             create: (context) => AnnouncementProvider())
       ],

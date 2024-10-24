@@ -249,7 +249,7 @@ class AppDrawer extends StatelessWidget {
                   leading: Icon(Icons.manage_search_outlined,
                       color: Theme.of(context).secondaryHeaderColor),
                   title: Text(
-                    'Knowledge Base',
+                    'Solution Forum',
                     style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: mainHeaderSize,

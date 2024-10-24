@@ -12,10 +12,7 @@ class DropdownMenuItemUtil {
         padding: const EdgeInsets.only(left: 12.0),
         child: Text(
           description,
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 15,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
         ),
       ),
     );
