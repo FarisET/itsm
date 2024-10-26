@@ -1,4 +1,4 @@
-package com.example.safify
+package com.safify.itsm
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -125,7 +125,16 @@ class LocationsDataService {
       print(jsonResponse);
       return jsonResponse;
     } else {
-      throw Exception('Failed to add location: ${response.body}');
+      // Decode the response body to check for specific error message
+      Map<String, dynamic> errorResponse = jsonDecode(response.body);
+
+      // Check for a specific error message and display custom message
+      if (errorResponse['error'] ==
+          'Duplicate entry error or other SQL exception occurred.') {
+        throw Exception('Failed to add location: Already exists.');
+      } else {
+        throw Exception('Failed to add location: ${errorResponse['error']}');
+      }
     }
   }
 

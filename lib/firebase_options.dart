@@ -41,48 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyA1rc5NbcB71pMTMRryQVQyimKbsn1XFHs',
-    appId: '1:855278908118:web:7a1297ac468e5257090f77',
-    messagingSenderId: '855278908118',
-    projectId: 'safify-7973d',
-    authDomain: 'safify-7973d.firebaseapp.com',
-    storageBucket: 'safify-7973d.appspot.com',
-    measurementId: 'G-1GY38EZPN5',
+    apiKey: 'AIzaSyAFr1o8r5kmgQZjqE6nDyQJs_rziK0fmeo',
+    appId: '1:513887305534:web:6509551b5ba7994d52b66f',
+    messagingSenderId: '513887305534',
+    projectId: 'safify-itsm',
+    authDomain: 'safify-itsm.firebaseapp.com',
+    storageBucket: 'safify-itsm.appspot.com',
+    measurementId: 'G-78MM2YCXNY',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDIh4cWRgMLFfsZQaiPBStLT8kzyMt89Rg',
-    appId: '1:855278908118:android:b1ec327af3b35d59090f77',
-    messagingSenderId: '855278908118',
-    projectId: 'safify-7973d',
-    storageBucket: 'safify-7973d.appspot.com',
+    apiKey: 'AIzaSyDO2pP08Bg_ZBxdn2Br5sLLbTMmyXz1uSo',
+    appId: '1:513887305534:android:a6f1984bdab6060552b66f',
+    messagingSenderId: '513887305534',
+    projectId: 'safify-itsm',
+    storageBucket: 'safify-itsm.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAk0DgR0E22c22cKDtZqwfSCfYnJFJqF-Y',
-    appId: '1:855278908118:ios:3a6d8442de00fcd0090f77',
-    messagingSenderId: '855278908118',
-    projectId: 'safify-7973d',
-    storageBucket: 'safify-7973d.appspot.com',
-    iosBundleId: 'com.example.safify',
+    apiKey: 'AIzaSyDWJ8d-dls6pImGElGBrwtFA3tjXSEchwI',
+    appId: '1:513887305534:ios:1509da40e21eba9752b66f',
+    messagingSenderId: '513887305534',
+    projectId: 'safify-itsm',
+    storageBucket: 'safify-itsm.appspot.com',
+    iosBundleId: 'com.safify.itsm',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAk0DgR0E22c22cKDtZqwfSCfYnJFJqF-Y',
-    appId: '1:855278908118:ios:3a6d8442de00fcd0090f77',
-    messagingSenderId: '855278908118',
-    projectId: 'safify-7973d',
-    storageBucket: 'safify-7973d.appspot.com',
-    iosBundleId: 'com.example.safify',
+    apiKey: 'AIzaSyDWJ8d-dls6pImGElGBrwtFA3tjXSEchwI',
+    appId: '1:513887305534:ios:1509da40e21eba9752b66f',
+    messagingSenderId: '513887305534',
+    projectId: 'safify-itsm',
+    storageBucket: 'safify-itsm.appspot.com',
+    iosBundleId: 'com.safify.itsm',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyA1rc5NbcB71pMTMRryQVQyimKbsn1XFHs',
-    appId: '1:855278908118:web:a43498f92ebf534a090f77',
-    messagingSenderId: '855278908118',
-    projectId: 'safify-7973d',
-    authDomain: 'safify-7973d.firebaseapp.com',
-    storageBucket: 'safify-7973d.appspot.com',
-    measurementId: 'G-PC83Y172SD',
+    apiKey: 'AIzaSyAFr1o8r5kmgQZjqE6nDyQJs_rziK0fmeo',
+    appId: '1:513887305534:web:e223e4d83982138d52b66f',
+    messagingSenderId: '513887305534',
+    projectId: 'safify-itsm',
+    authDomain: 'safify-itsm.firebaseapp.com',
+    storageBucket: 'safify-itsm.appspot.com',
+    measurementId: 'G-RD5B9TBRWB',
   );
 }

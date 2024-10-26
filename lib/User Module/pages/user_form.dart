@@ -998,13 +998,6 @@ class _UserFormState extends State<UserForm> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      // Text(
-                                      //   ' (optional)',
-                                      //   style: TextStyle(
-                                      //       color: Theme.of(context).hintColor,
-                                      //       fontWeight: FontWeight.normal,
-                                      //       fontSize: 12),
-                                      // )
                                     ],
                                   ),
                                 ),

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Required for LengthLimitingTextInputFormatter
@@ -15,6 +17,7 @@ class AddLocationPage extends StatefulWidget {
 
 class _AddLocationPageState extends State<AddLocationPage> {
   final TextEditingController _locationController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void dispose() {
@@ -23,8 +26,16 @@ class _AddLocationPageState extends State<AddLocationPage> {
   }
 
   @override
-  void initstate() {
+  void initState() {
+    super.initState();
     Provider.of<LocationProvider>(context, listen: false).fetchLocations();
+    _locationController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _locationController.text;
+    });
   }
 
   void _showConfirmationDialog(String locationName) {
@@ -61,107 +72,147 @@ class _AddLocationPageState extends State<AddLocationPage> {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 10.0),
-              const Padding(
-                padding: EdgeInsets.only(left: 8.0),
-                child: Row(
-                  children: [
-                    Icon(CupertinoIcons.location_solid,
-                        color: Colors.black, size: 20.0),
-                    SizedBox(width: 10.0),
-                    Text(
-                      "New Location Name",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10.0),
-              TextField(
-                autofocus: true,
-                controller: _locationController,
-                textInputAction: TextInputAction.done,
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(50),
-                ],
-                decoration: InputDecoration(
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  fillColor: Colors.white,
-                  filled: true,
-                  labelText: 'New Location Name',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                textCapitalization: TextCapitalization.words,
-              ),
-              const SizedBox(height: 20.0),
-
-              // ListView for displaying fetched locations
-              Expanded(
-                child: Consumer<LocationProvider>(
-                  builder: (context, locationProvider, child) {
-                    if (locationProvider.allLocations == null) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (locationProvider.allLocations!.isEmpty) {
-                      return const Center(
-                          child: Text('No locations available.'));
-                    }
-                    return ListView.builder(
-                      itemCount: locationProvider.allLocations!.length,
-                      itemBuilder: (context, index) {
-                        final location = locationProvider.allLocations![index];
-                        return ListTile(
-                          title: Text(location
-                              .locationName), // Assuming location has a 'name' field
-                          onTap: () {
-                            locationProvider.setLocation(location.locationName);
-                          },
-                          selected: locationProvider.selectedLocation ==
-                              location.locationName,
-                          selectedTileColor: Colors.grey[300],
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 20.0),
-
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  child: Card(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 10.0),
+                          Row(
+                            children: [
+                              Icon(CupertinoIcons.location_solid,
+                                  color: Colors.black, size: 20.0),
+                              SizedBox(width: 10.0),
+                              Text(
+                                "New Location Name",
+                                style: TextStyle(
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10.0),
+                          TextField(
+                            autofocus: true,
+                            controller: _locationController,
+                            textInputAction: TextInputAction.done,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(50),
+                            ],
+                            decoration: InputDecoration(
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.never,
+                              fillColor: Colors.white,
+                              filled: true,
+                              labelText: 'New Location Name',
+                              labelStyle: const TextStyle(
+                                fontSize: 14, // Set the label text size
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            textCapitalization: TextCapitalization.words,
+                          ),
+                          const SizedBox(height: 20.0),
+
+                          // ListView for displaying fetched locations with search functionality
+                          Expanded(
+                            child: Consumer<LocationProvider>(
+                              builder: (context, locationProvider, child) {
+                                if (locationProvider.allLocations == null) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                if (locationProvider.allLocations!.isEmpty) {
+                                  return const Center(
+                                    child: Text('No locations available.'),
+                                  );
+                                }
+
+                                final filteredLocations = locationProvider
+                                    .allLocations!
+                                    .where((location) => location.locationName
+                                        .toLowerCase()
+                                        .contains(_searchQuery.toLowerCase()))
+                                    .toList();
+
+                                return filteredLocations.isEmpty
+                                    ? const Center(
+                                        child: Text('No matching locations.'),
+                                      )
+                                    : Scrollbar(
+                                        thumbVisibility: true,
+                                        child: ListView.builder(
+                                          itemCount: filteredLocations.length,
+                                          itemBuilder: (context, index) {
+                                            final location =
+                                                filteredLocations[index];
+                                            return ListTile(
+                                              title:
+                                                  Text(location.locationName),
+                                              onTap: () {
+                                                locationProvider.setLocation(
+                                                    location.locationName);
+                                              },
+                                              selected: locationProvider
+                                                      .selectedLocation ==
+                                                  location.locationName,
+                                            );
+                                          },
+                                        ),
+                                      );
+                              },
+                            ),
+                          ),
+
+                          const SizedBox(height: 20.0),
+
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                final locationName = _locationController.text;
+                                if (locationName.isNotEmpty) {
+                                  _showConfirmationDialog(locationName);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      duration: Duration(seconds: 1),
+                                      content:
+                                          Text('Please enter a location name'),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: const Text('Add Location'),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  onPressed: () {
-                    final locationName = _locationController.text;
-                    if (locationName.isNotEmpty) {
-                      _showConfirmationDialog(locationName);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          duration: Duration(seconds: 1),
-                          content: Text('Please enter a location name'),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Add Location'),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -183,6 +234,26 @@ class AlertDialogBox extends StatefulWidget {
 class _AlertDialogBoxState extends State<AlertDialogBox> {
   final LocationsDataService _locationsDataService = LocationsDataService();
   bool isSubmitting = false;
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message.replaceFirst('Exception: ', '')),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -221,40 +292,30 @@ class _AlertDialogBoxState extends State<AlertDialogBox> {
                     setState(() {
                       isSubmitting = true;
                     });
-                    // Handle the confirmation action
-                    // await Future.delayed(const Duration(seconds: 1));
 
                     try {
-                      // throw Exception(
-                      //     'Error adding location'); // remove this later
-
                       await _locationsDataService
                           .addLocation(widget.locationName);
-                    } catch (e) {
-                      print('Error adding location: $e');
-
-                      Navigator.of(context).popUntil(
-                          (route) => route.isFirst); // final response =
-                      ToastService.showCustomSnackBar(
-                        context: context,
-                        content: const Text('Failed to add location:'),
-                        leading: const Icon(
-                          Icons.error,
-                          color: Colors.black,
-                        ),
-                      );
+                      await Provider.of<LocationProvider>(context,
+                              listen: false)
+                          .fetchLocations();
+                    } on Exception catch (e) {
                       setState(() {
+                        Provider.of<LocationProvider>(context, listen: false)
+                            .fetchLocations();
                         isSubmitting = false;
                       });
+                      _showErrorDialog(e.toString());
                       return;
                     }
 
                     setState(() {
                       isSubmitting = false;
                     });
-                    Navigator.of(context)
-                        .popUntil((route) => route.isFirst); // final response =
-                    // print('Response: $response');
+
+                    //Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context).pop();
+
                     ToastService.showLocationAddedSnackBar(context);
                   },
                   child: SizedBox(
@@ -273,17 +334,15 @@ class _AlertDialogBoxState extends State<AlertDialogBox> {
                               ),
                             )
                           : const Text(
-                              'Confirm',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
+                              'Add',
+                              style: TextStyle(color: Colors.white),
                             ),
                     ),
                   ),
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

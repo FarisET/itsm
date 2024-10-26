@@ -203,32 +203,34 @@ class _AdminHomePageState extends State<AdminHomePage>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         //Text
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              user_name != null
-                                  ? Text(
-                                      '$user_name',
-                                      style: const TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
-                                    )
-                                  : const Text(
-                                      'Citizen',
-                                      style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.007,
-                              ),
-                              Text(
-                                  intl.DateFormat('d MMMM y')
-                                      .format(DateTime.now()),
-                                  style:
-                                      Theme.of(context).textTheme.titleSmall),
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                user_name != null
+                                    ? Text(
+                                        '$user_name',
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    : const Text(
+                                        'No Name',
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.007,
+                                ),
+                                Text(
+                                    intl.DateFormat('d MMMM y')
+                                        .format(DateTime.now()),
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall),
+                              ],
+                            ),
                           ),
 
                           //dashboard
