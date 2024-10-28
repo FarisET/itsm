@@ -44,9 +44,17 @@ class _AddLocationPageState extends State<AddLocationPage> {
       builder: (BuildContext context) {
         return AlertDialogBox(
           locationName: locationName,
+          onLocationAdded: _refreshLocations, // Call refresh function
         );
       },
     );
+  }
+
+  // New function to refresh locations list after adding a new location
+  void _refreshLocations() {
+    Provider.of<LocationProvider>(context, listen: false)
+        .SyncDbAndFetchLocations();
+    setState(() {});
   }
 
   @override
@@ -104,7 +112,6 @@ class _AddLocationPageState extends State<AddLocationPage> {
                           ),
                           const SizedBox(height: 10.0),
                           TextField(
-                            autofocus: true,
                             controller: _locationController,
                             textInputAction: TextInputAction.done,
                             inputFormatters: [
@@ -117,7 +124,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
                               filled: true,
                               labelText: 'New Location Name',
                               labelStyle: const TextStyle(
-                                fontSize: 14, // Set the label text size
+                                fontSize: 14,
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -193,6 +200,9 @@ class _AddLocationPageState extends State<AddLocationPage> {
                                 final locationName = _locationController.text;
                                 if (locationName.isNotEmpty) {
                                   _showConfirmationDialog(locationName);
+                                  FocusScope.of(context)
+                                      .unfocus(); // Dismiss the keyboard
+                                  _locationController.clear(); // Clear input
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -222,9 +232,12 @@ class _AddLocationPageState extends State<AddLocationPage> {
 
 class AlertDialogBox extends StatefulWidget {
   final String locationName;
+  final VoidCallback onLocationAdded;
+
   AlertDialogBox({
     super.key,
     required this.locationName,
+    required this.onLocationAdded,
   });
 
   @override
@@ -296,13 +309,9 @@ class _AlertDialogBoxState extends State<AlertDialogBox> {
                     try {
                       await _locationsDataService
                           .addLocation(widget.locationName);
-                      await Provider.of<LocationProvider>(context,
-                              listen: false)
-                          .fetchLocations();
+                      widget.onLocationAdded(); // Call callback to refresh
                     } on Exception catch (e) {
                       setState(() {
-                        Provider.of<LocationProvider>(context, listen: false)
-                            .fetchLocations();
                         isSubmitting = false;
                       });
                       _showErrorDialog(e.toString());
@@ -313,9 +322,7 @@ class _AlertDialogBoxState extends State<AlertDialogBox> {
                       isSubmitting = false;
                     });
 
-                    //Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.of(context).pop();
-
                     ToastService.showLocationAddedSnackBar(context);
                   },
                   child: SizedBox(
@@ -328,7 +335,6 @@ class _AlertDialogBoxState extends State<AlertDialogBox> {
                               height:
                                   MediaQuery.of(context).size.height * 0.025,
                               child: const CircularProgressIndicator(
-                                strokeWidth: 2.5,
                                 valueColor:
                                     AlwaysStoppedAnimation<Color>(Colors.white),
                               ),

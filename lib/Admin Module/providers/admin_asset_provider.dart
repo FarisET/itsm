@@ -7,7 +7,7 @@ import 'package:safify/models/asset_type.dart';
 
 import '../../constants.dart';
 
-class AssetProviderClass extends ChangeNotifier {
+class AdminAssetProvider extends ChangeNotifier {
   List<AssetType>? assetTypeList;
   List<Asset> allAssets = [];
   bool loading = false;
@@ -51,8 +51,7 @@ class AssetProviderClass extends ChangeNotifier {
       notifyListeners();
 
       jwtToken = await storage.read(key: 'jwt');
-      Uri url =
-          Uri.parse('$IP_URL/userReport/dashboard/getAssetsandAssetTypes');
+      Uri url = Uri.parse('$IP_URL/admin/dashboard/getAssetsandAssetTypes');
       final response = await http.get(
         url,
         headers: {

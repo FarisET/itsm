@@ -6,6 +6,7 @@ import 'package:safify/Admin%20Module/admin_pages/add_location_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/add_subincident_type.dart';
 import 'package:safify/Admin%20Module/admin_pages/add_sublocation_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/search_solution_forum_page.dart';
+import 'package:safify/Admin%20Module/admin_pages/view_asset_list.dart';
 import 'package:safify/Admin%20Module/providers/announcement_provider.dart';
 import 'package:safify/models/announcement_notif.dart';
 import 'package:safify/services/pdf_download_service.dart';
@@ -226,6 +227,23 @@ class AppDrawer extends StatelessWidget {
                     // await pdfService.getPdf(null, null, null);
                     // Navigator.of(context).pop();
                     await _showDateInputDialog(context, pdfService);
+                  },
+                ),
+                ListTile(
+                  horizontalTitleGap: 0,
+                  leading: Icon(Icons.holiday_village_outlined,
+                      color: Theme.of(context).secondaryHeaderColor),
+                  title: Text(
+                    'View Assets',
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: mainHeaderSize,
+                      color: Theme.of(context).secondaryHeaderColor,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const ViewAsset()));
                   },
                 ),
                 ListTile(

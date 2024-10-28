@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:safify/Admin%20Module/admin_pages/create_user_form.dart';
 import 'package:safify/Admin%20Module/providers/action_team_efficiency_provider.dart';
+import 'package:safify/Admin%20Module/providers/admin_asset_provider.dart';
 import 'package:safify/Admin%20Module/providers/all_action_team_provider.dart';
 import 'package:safify/Admin%20Module/providers/announcement_provider.dart';
 import 'package:safify/Admin%20Module/providers/delete_action_report_provider.dart';
@@ -224,7 +225,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AssetProviderClass>(
             create: (context) => AssetProviderClass()),
         ChangeNotifierProvider<AnnouncementProvider>(
-            create: (context) => AnnouncementProvider())
+            create: (context) => AnnouncementProvider()),
+        ChangeNotifierProvider<AdminAssetProvider>(
+            create: (context) => AdminAssetProvider())
       ],
       child: MaterialApp(
         useInheritedMediaQuery: true,
