@@ -124,10 +124,8 @@ class _UserFormState extends State<UserForm> {
   }
 
   DropdownMenuItem<String> buildSubAssetMenuItem(Asset type) {
-    return DropdownMenuItemUtil.buildDropdownMenuItem<Asset>(
-        type,
-        type.assetNo.toString() ?? 'n/a',
-        type.assetName.toString() ?? 'No Name');
+    return DropdownMenuItemUtil.buildDropdownMenuItem<Asset>(type,
+        type.assetNo.toString() ?? 'n/a', type.assetName.toString() ?? 'n/a');
   }
 
   void _editImage() {

@@ -235,6 +235,28 @@ class ToastService {
     ).show(context);
   }
 
+  static void showDepartmentAddedSnackBar(BuildContext context) {
+    DelightToastBar(
+      snackbarDuration: const Duration(seconds: 3),
+      animationDuration: const Duration(milliseconds: 450),
+      autoDismiss: true,
+      builder: (context) => const CustomToast(
+        leading: Icon(
+          Icons.check_circle_outline_rounded,
+          size: 28,
+          color: Colors.black,
+        ),
+        title: Text(
+          "Department added successfully.",
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            // fontSize: 14,
+          ),
+        ),
+      ),
+    ).show(context);
+  }
+
   static void showLocationAddedSnackBar(BuildContext context) {
     DelightToastBar(
       snackbarDuration: const Duration(seconds: 3),

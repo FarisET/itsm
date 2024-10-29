@@ -131,7 +131,7 @@ class LocationsDataService {
       // Check for a specific error message and display custom message
       if (errorResponse['error'] ==
           'Duplicate entry error or other SQL exception occurred.') {
-        throw Exception('Failed to add location: Already exists.');
+        throw Exception('Location already exists.');
       } else {
         throw Exception('Failed to add location: ${errorResponse['error']}');
       }
@@ -164,9 +164,17 @@ class LocationsDataService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
       return jsonResponse;
     } else {
-      throw Exception('Failed to add incident Type: ${response.body}');
+      Map<String, dynamic> errorResponse = jsonDecode(response.body);
+
+      if (errorResponse['error'] ==
+          'Duplicate entry error or other SQL exception occurred.') {
+        throw Exception('Department already exists.');
+      } else {
+        throw Exception('Failed to add department: ${errorResponse['error']}');
+      }
     }
   }
 }

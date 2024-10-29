@@ -10,10 +10,8 @@ import 'package:safify/repositories/sublocation_repository.dart';
 import 'package:safify/utils/map_utils.dart';
 
 class SubLocationProviderClass extends ChangeNotifier {
-  List<SubLocation>? allSubLocations;
-
-  /// List of all sublocations for the selected location
-  List<SubLocation>? subLocations;
+  List<SubLocation>? allSubLocations; // All sublocations loaded once
+  List<SubLocation>? subLocations; // Sublocations for the selected location
   bool loading = false;
   String? selectedSubLocation;
   String? jwtToken;
@@ -23,42 +21,45 @@ class SubLocationProviderClass extends ChangeNotifier {
 
   final storage = const FlutterSecureStorage();
 
+  /// Fetch sublocations based on location ID, clearing `subLocations` before each fetch
   Future<void> getSubLocationPostData(String locationId) async {
     loading = true;
-    if (allSubLocations == null) {
-      try {
+    subLocations = null; // Clear subLocations to reset the list
+    notifyListeners();
+
+    try {
+      // Load all sublocations only once
+      if (allSubLocations == null) {
         final sublocations =
             await _locationRepository.fetchAllSublocationsFromDb();
         setAllSubLocations(sublocations);
-      } catch (e) {
-        print('Error fetching sublocations: $e');
       }
+
+      // Fetch sublocations specific to the selected location
+      subLocations = getSubLocationsForLocation(locationId);
+    } catch (e) {
+      print('Error fetching sublocations: $e');
+    } finally {
+      loading = false;
+      notifyListeners();
     }
-
-    subLocations = getSubLocationsForLocation(locationId);
-    loading = false;
-    notifyListeners();
   }
 
-  void setSubLocationType(selectedVal) {
-    selectedSubLocation = selectedVal;
-    notifyListeners();
-  }
-
+  /// Sets all sublocations and maps them by location ID
   void setAllSubLocations(List<SubLocation> allSubLocations) {
     this.allSubLocations = allSubLocations;
     locationToSubLocationsMap = makeSublocationMap(allSubLocations);
-
     notifyListeners();
   }
 
+  /// Gets sublocations specific to the provided location ID
   List<SubLocation> getSubLocationsForLocation(String locationID) {
     return locationToSubLocationsMap[locationID] ?? [];
   }
 
-  // Future<void> refresh() async {
-  //   final list = await _locationRepository.fetchAllSublocationsFromDb();
-  //   setAllSubLocations(list);
-  //   notifyListeners();
-  // }
+  /// Set selected sublocation
+  void setSubLocationType(selectedVal) {
+    selectedSubLocation = selectedVal;
+    notifyListeners();
+  }
 }
