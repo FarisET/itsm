@@ -6,6 +6,7 @@ import 'package:safify/Admin%20Module/admin_pages/add_location_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/add_subincident_type.dart';
 import 'package:safify/Admin%20Module/admin_pages/add_sublocation_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/search_solution_forum_page.dart';
+import 'package:safify/Admin%20Module/admin_pages/view_all_logs_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/view_asset_list.dart';
 import 'package:safify/Admin%20Module/providers/announcement_provider.dart';
 import 'package:safify/models/announcement_notif.dart';
@@ -277,6 +278,23 @@ class AppDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const SearchSolutionForum()));
+                  },
+                ),
+                ListTile(
+                  horizontalTitleGap: 0,
+                  leading: Icon(Icons.list_alt_outlined,
+                      color: Theme.of(context).secondaryHeaderColor),
+                  title: Text(
+                    'View Logs',
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: mainHeaderSize,
+                      color: Theme.of(context).secondaryHeaderColor,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => LogPage()));
                   },
                 ),
               ],

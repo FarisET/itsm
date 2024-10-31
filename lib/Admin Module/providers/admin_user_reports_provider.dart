@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:safify/db/database_helper.dart';
-import 'package:safify/models/token_expired.dart';
 import 'package:safify/repositories/admin_user_reports_repository.dart';
 import 'package:safify/services/toast_service.dart';
 import 'package:safify/utils/network_util.dart';

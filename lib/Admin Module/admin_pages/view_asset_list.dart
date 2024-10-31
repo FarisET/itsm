@@ -21,9 +21,6 @@ class _ViewAssetState extends State<ViewAsset> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<AdminAssetProvider>(context, listen: false);
       provider.loadAllAssets();
-      setState(() {
-        filteredAssets = provider.allAssets; // Initially load all assets
-      });
     });
   }
 
@@ -41,8 +38,6 @@ class _ViewAssetState extends State<ViewAsset> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AdminAssetProvider>(context);
-    final isLoading = provider.loading;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -52,7 +47,6 @@ class _ViewAssetState extends State<ViewAsset> {
           icon: Icon(Icons.arrow_back,
               color: Theme.of(context).secondaryHeaderColor),
           onPressed: () {
-            // Add your navigation logic here, such as pop or navigate back
             Navigator.of(context).pop();
           },
         ),
@@ -89,47 +83,53 @@ class _ViewAssetState extends State<ViewAsset> {
                   ),
                 ),
               ),
-              if (isLoading)
-                Center(child: CircularProgressIndicator())
-              else
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: filteredAssets.length,
-                    itemBuilder: (context, index) {
-                      final asset = filteredAssets[index];
-                      return Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: screenWidth * 0.005),
-                        child: Card(
-                          elevation: 1,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ListTile(
-                            title: Text(asset.assetName ?? 'Unknown Asset'),
-                            subtitle: Text(
-                                'Past Tickets: ${asset.assetIssueCount ?? 0}'),
-                            trailing: TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AssetHistoryPage(
-                                      assetName: asset
-                                          .assetName!, // Pass asset_no here
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Text('View History'),
+              Expanded(
+                child: Consumer<AdminAssetProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.loading) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      filteredAssets = searchController.text.isEmpty
+                          ? provider.allAssets
+                          : filteredAssets;
+                      return ListView.builder(
+                        itemCount: filteredAssets.length,
+                        itemBuilder: (context, index) {
+                          final asset = filteredAssets[index];
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: screenWidth * 0.005),
+                            child: Card(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: ListTile(
+                                title: Text(asset.assetName ?? 'Unknown Asset'),
+                                subtitle: Text(
+                                    'Past Tickets: ${asset.assetIssueCount ?? 0}'),
+                                trailing: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AssetHistoryPage(
+                                          assetNo: asset.assetNo!,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Text('View History'),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       );
-                    },
-                  ),
+                    }
+                  },
                 ),
+              ),
             ],
           ),
         ),
