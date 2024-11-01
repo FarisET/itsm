@@ -137,13 +137,6 @@ class ReportServices {
 
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = jsonDecode(response.body) as List<dynamic>;
-        // debugPrint('jsonResponse: $jsonResponse');
-
-        // List<UserReport> allReportList = jsonResponse
-        //     .map((dynamic item) =>
-        //         UserReport.fromJson(item as Map<String, dynamic>))
-        //     .toList();
-        // return allReportList;
 
         final list =
             jsonResponse.map((e) => e as Map<String, dynamic>).toList();

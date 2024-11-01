@@ -2,83 +2,59 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:safify/User%20Module/providers/location_provider.dart';
-import 'package:safify/User%20Module/providers/sub_location_provider.dart';
-import 'package:safify/api/locations_data_service.dart';
+import 'package:safify/Admin%20Module/providers/admin_asset_provider.dart';
+import 'package:safify/api/asset_data_services.dart';
 import 'package:safify/services/toast_service.dart';
 
-class AddSublocationPage extends StatefulWidget {
-  const AddSublocationPage({super.key});
+class AddAssetPage extends StatefulWidget {
+  const AddAssetPage({super.key});
 
   @override
-  State<AddSublocationPage> createState() => _AddSublocationPageState();
+  State<AddAssetPage> createState() => _AddAssetPageState();
 }
 
-class _AddSublocationPageState extends State<AddSublocationPage> {
-  final TextEditingController _sublocationController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-  String? _selectedLocationName;
-  String? _selectedLocationId;
+class _AddAssetPageState extends State<AddAssetPage> {
+  final TextEditingController _assetController = TextEditingController();
+  final TextEditingController _assetTypeController = TextEditingController();
+  String? _selectedAssetType;
+  String? _selectedAssetTypeId;
   String _searchQuery = '';
-  bool isLocationDropdownSelected = false;
+  bool isAssetTypeDropdownSelected = false;
 
   @override
   void dispose() {
-    _sublocationController.dispose();
+    _assetController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    Provider.of<LocationProviderClass>(context, listen: false)
-        .SyncDbAndFetchLocations();
+    Provider.of<AdminAssetProvider>(context, listen: false)
+        .fetchAssetTypesandSubTypes();
   }
 
-  void _refreshLocations() {
-    Provider.of<LocationProviderClass>(context, listen: false)
-        .SyncDbAndFetchLocations();
+  void _refreshAssets() {
+    Provider.of<AdminAssetProvider>(context, listen: false)
+        .fetchAssetTypesandSubTypes();
     setState(() {});
   }
 
-  void _onLocationSelected(String? locationId) {
-    if (locationId != null) {
-      setState(() {
-        // Reset state before fetching new sublocations
-        isLocationDropdownSelected = false;
-        _selectedLocationId = locationId; // Update selected location ID
-      });
-
-      // Clear any existing sublocations
-      Provider.of<SubLocationProviderClass>(context, listen: false)
-          .subLocations = null;
-
-      // Fetch new sublocations for the selected location
-      Provider.of<SubLocationProviderClass>(context, listen: false)
-          .getSubLocationPostData(locationId)
-          .then((_) {
-        setState(() {
-          isLocationDropdownSelected =
-              true; // Enable display after loading completes
-        });
-      });
-    }
-
-    // Clear sublocation field and dismiss keyboard
-    _sublocationController.clear();
-    FocusScope.of(context).unfocus();
+  void _onAssetSelected(String? assetTypeId) {
+    Provider.of<AdminAssetProvider>(context, listen: false)
+        .getFilteredAssets(assetTypeId);
   }
 
   void _showConfirmationDialog(
-      String locationId, String sublocationName, String locationName) {
+      String assetName, String assetTypeId, String assetTypeName) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return SublocationAlertDialogBox(
-          locationId: locationId,
-          sublocationName: sublocationName,
-          locationName: locationName,
-          onLocationAdded: _refreshLocations,
+        return AssetAlertDialogBox(
+          assetName: assetName,
+          assetTypeId: assetTypeId,
+          assetTypeName: assetTypeName,
+          onAssetAdded: _refreshAssets,
         );
       },
     );
@@ -86,7 +62,7 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final locationsProvider = Provider.of<LocationProviderClass>(context);
+    final assetsProvider = Provider.of<AdminAssetProvider>(context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -100,7 +76,7 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
             },
           ),
           title: Text(
-            "Add Department",
+            "Add Asset",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -130,14 +106,14 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                               padding: EdgeInsets.only(left: 8.0),
                               child: Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     CupertinoIcons.location_solid,
                                     color: Colors.black,
                                     size: 20.0,
                                   ),
                                   SizedBox(width: 10.0),
                                   Text(
-                                    "Select Location",
+                                    "Select Asset Type",
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .secondaryHeaderColor,
@@ -172,26 +148,26 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                                 requestFocusOnTap: true,
                                 menuHeight:
                                     MediaQuery.sizeOf(context).height * 0.3,
-                                label: const Text("Select Location"),
-                                controller: _locationController,
+                                label: const Text("Select Asset Type"),
+                                controller: _assetTypeController,
                                 enableFilter: true,
                                 enableSearch: true,
                                 onSelected: (value) {
                                   setState(() {
-                                    _selectedLocationId = value;
-                                    _selectedLocationName =
-                                        _locationController.text.isEmpty
+                                    _selectedAssetTypeId = value.toString();
+                                    _selectedAssetType =
+                                        _assetTypeController.text.isEmpty
                                             ? null
-                                            : _locationController.text;
-                                    isLocationDropdownSelected = true;
+                                            : _assetTypeController.text;
+                                    isAssetTypeDropdownSelected = true;
                                   });
-                                  _sublocationController.clear();
-                                  _onLocationSelected(_selectedLocationId);
+                                  _assetController.clear();
+                                  _onAssetSelected(_selectedAssetTypeId);
                                 },
                                 dropdownMenuEntries: [
                                   const DropdownMenuEntry(
                                     labelWidget: Text(
-                                      "Select Location",
+                                      "Select Asset Type",
                                       style: TextStyle(
                                           color: Colors.grey,
                                           fontStyle: FontStyle.italic),
@@ -199,11 +175,11 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                                     label: "",
                                     value: null,
                                   ),
-                                  ...locationsProvider.allLocations!
-                                      .map((location) {
+                                  ...assetsProvider.assetTypeList!
+                                      .map((assetType) {
                                     return DropdownMenuEntry(
-                                      label: location.locationName,
-                                      value: location.locationId,
+                                      label: assetType.assetTypeDesc,
+                                      value: assetType.assetTypeId,
                                     );
                                   }).toList()
                                 ]),
@@ -214,7 +190,7 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: RichText(
                                     text: TextSpan(
-                                      text: 'Selected Location Name: ',
+                                      text: 'Selected Type Name: ',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16.0,
@@ -222,7 +198,7 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                                       ),
                                       children: [
                                         TextSpan(
-                                          text: _selectedLocationName ?? 'None',
+                                          text: _selectedAssetType ?? 'None',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.normal,
                                           ),
@@ -237,21 +213,21 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                               child: Row(
                                 children: [
                                   Icon(
-                                    _selectedLocationId == null
+                                    _selectedAssetTypeId == null
                                         ? Icons.info_outline
                                         : Icons.info,
-                                    color: _selectedLocationName == null
+                                    color: _selectedAssetType == null
                                         ? Colors.grey
                                         : Colors.black,
                                     size: 20.0,
                                   ),
                                   const SizedBox(width: 10.0),
-                                  Text("New Department Name",
+                                  Text("Asset Name",
                                       style: TextStyle(
-                                        fontWeight: _selectedLocationId == null
+                                        fontWeight: _selectedAssetTypeId == null
                                             ? FontWeight.normal
                                             : FontWeight.bold,
-                                        color: _selectedLocationId == null
+                                        color: _selectedAssetTypeId == null
                                             ? Colors.grey
                                             : Theme.of(context)
                                                 .secondaryHeaderColor,
@@ -261,19 +237,19 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                             ),
                             const SizedBox(height: 10.0),
                             TextField(
-                              enabled: _selectedLocationName != null,
-                              controller: _sublocationController,
+                              enabled: _selectedAssetType != null,
+                              controller: _assetController,
                               textInputAction: TextInputAction.done,
                               inputFormatters: [
                                 LengthLimitingTextInputFormatter(50),
                               ],
                               decoration: InputDecoration(
                                 fillColor: Colors.white,
-                                filled: _selectedLocationId != null,
+                                filled: _selectedAssetTypeId != null,
                                 alignLabelWithHint: true,
-                                hintText: _selectedLocationId == null
-                                    ? 'Select a location first'
-                                    : 'Enter department name',
+                                hintText: _selectedAssetTypeId == null
+                                    ? 'Select asset type first'
+                                    : 'Enter asset name',
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.never,
                                 enabledBorder: OutlineInputBorder(
@@ -289,64 +265,55 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                               textCapitalization: TextCapitalization.words,
                             ),
                             const SizedBox(height: 20.0),
-                            if (isLocationDropdownSelected)
-                              Expanded(
-                                child: Consumer<SubLocationProviderClass>(
-                                  builder: (context, locationProvider, child) {
-                                    if (locationProvider.subLocations == null) {
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    }
-                                    if (locationProvider
-                                        .allSubLocations!.isEmpty) {
-                                      return const Center(
-                                        child:
-                                            Text('No departments available.'),
-                                      );
-                                    }
+                            if (isAssetTypeDropdownSelected)
+                              Expanded(child: Consumer<AdminAssetProvider>(
+                                builder: (context, assetProvider, child) {
+                                  final filteredAssets = assetProvider
+                                      .getFilteredAssets(_selectedAssetTypeId);
 
-                                    final filteredLocations = locationProvider
-                                        .subLocations!
-                                        .where((location) => location
-                                            .sublocationName
-                                            .toLowerCase()
-                                            .contains(
-                                                _searchQuery.toLowerCase()))
-                                        .toList();
+                                  if (assetProvider.loading) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
 
-                                    return filteredLocations.isEmpty
-                                        ? const Center(
-                                            child: Text(
-                                                'No matching departments.'),
-                                          )
-                                        : Scrollbar(
-                                            thumbVisibility: true,
-                                            child: ListView.builder(
-                                              itemCount:
-                                                  filteredLocations.length,
-                                              itemBuilder: (context, index) {
-                                                final location =
-                                                    filteredLocations[index];
-                                                return ListTile(
-                                                  title: Text(
-                                                      location.sublocationName),
-                                                  onTap: () {
-                                                    locationProvider
-                                                        .setSubLocationType(
-                                                            location
-                                                                .sublocationName);
-                                                  },
-                                                  selected: locationProvider
-                                                          .selectedSubLocation ==
-                                                      location.sublocationName,
-                                                );
-                                              },
-                                            ),
-                                          );
-                                  },
-                                ),
-                              ),
+                                  // Apply search query filtering
+                                  final filteredAssetsByQuery = filteredAssets
+                                      .where((asset) => asset.assetName!
+                                          .toLowerCase()
+                                          .contains(_searchQuery.toLowerCase()))
+                                      .toList();
+
+                                  // Check if the filtered list based on query is empty
+                                  if (filteredAssetsByQuery.isEmpty) {
+                                    return const Center(
+                                      child: Text('No assets available.'),
+                                    );
+                                  }
+
+                                  return Scrollbar(
+                                    thumbVisibility: true,
+                                    child: ListView.builder(
+                                      itemCount: filteredAssetsByQuery.length,
+                                      itemBuilder: (context, index) {
+                                        final asset =
+                                            filteredAssetsByQuery[index];
+                                        return ListTile(
+                                          title: Text(asset.assetName!),
+                                          onTap: () {
+                                            assetProvider
+                                                .setSelectedAssetSubtype(
+                                                    asset.assetName);
+                                          },
+                                          selected: assetProvider
+                                                  .selectedAssetSubtype ==
+                                              asset.assetName,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              )),
                           ],
                         ),
                       ),
@@ -360,21 +327,22 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                             ),
                           ),
                           onPressed: () {
-                            final sublocationName = _sublocationController.text;
-                            if (_selectedLocationName != null &&
-                                sublocationName.isNotEmpty) {
-                              _showConfirmationDialog(_selectedLocationId!,
-                                  sublocationName, _selectedLocationName!);
+                            final assetName = _assetController.text;
+                            if (_selectedAssetType != null &&
+                                assetName.isNotEmpty) {
+                              _showConfirmationDialog(assetName,
+                                  _selectedAssetTypeId!, _selectedAssetType!);
+                              FocusScope.of(context).unfocus();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     duration: Duration(seconds: 1),
                                     content: Text(
-                                        'Please select a location and enter a department name')),
+                                        'Please select asset type and enter an asset name')),
                               );
                             }
                           },
-                          child: const Text('Add Department'),
+                          child: const Text('Add Asset'),
                         ),
                       ),
                     ],
@@ -389,28 +357,35 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
   }
 }
 
-class SublocationAlertDialogBox extends StatefulWidget {
-  final String locationId;
-  final String locationName;
-  final String sublocationName;
-  final VoidCallback onLocationAdded;
+class AssetAlertDialogBox extends StatefulWidget {
+  final String assetName;
+  final String assetTypeId;
+  final String assetTypeName;
+  final VoidCallback onAssetAdded;
 
-  SublocationAlertDialogBox(
-      {super.key,
-      required this.locationId,
-      required this.locationName,
-      required this.sublocationName,
-      required this.onLocationAdded,
-      required});
+  AssetAlertDialogBox({
+    super.key,
+    required this.assetName,
+    required this.assetTypeId,
+    required this.assetTypeName,
+    required this.onAssetAdded,
+  });
 
   @override
-  State<SublocationAlertDialogBox> createState() =>
-      _SublocationAlertDialogBoxState();
+  State<AssetAlertDialogBox> createState() => _AssetAlertDialogBoxState();
 }
 
-class _SublocationAlertDialogBoxState extends State<SublocationAlertDialogBox> {
-  final LocationsDataService _locationsDataService = LocationsDataService();
+class _AssetAlertDialogBoxState extends State<AssetAlertDialogBox> {
+  final AssetDataServices _assetsDataService = AssetDataServices();
+  final TextEditingController _assetDescController = TextEditingController();
   bool isSubmitting = false;
+
+  @override
+  void dispose() {
+    _assetDescController.dispose();
+    super.dispose();
+  }
+
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -437,36 +412,46 @@ class _SublocationAlertDialogBoxState extends State<SublocationAlertDialogBox> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      title: const Text('Confirm department'),
+      title: const Text('Confirm asset'),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Are you sure you want to add this new department:'),
+          const Text('Are you sure you want to add this new asset:'),
           const SizedBox(height: 20.0),
           Center(
-            child: Text(widget.sublocationName,
+            child: Text(widget.assetName,
                 style: const TextStyle(
                     fontWeight: FontWeight.bold, fontSize: 20.0)),
           ),
           const SizedBox(height: 20.0),
           RichText(
-              text: TextSpan(
-            text: 'To the location: ',
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: Colors.black,
-            ),
-            children: [
-              TextSpan(
-                text: widget.locationName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+            text: TextSpan(
+              text: 'To the asset type: ',
+              style: const TextStyle(
+                fontSize: 16.0,
+                color: Colors.black,
               ),
-            ],
-          )),
+              children: [
+                TextSpan(
+                  text: widget.assetTypeName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 10.0),
+          TextField(
+            controller: _assetDescController,
+            maxLines: 2,
+            decoration: const InputDecoration(
+              labelText: 'Optional Description',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 20.0),
           Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
@@ -490,17 +475,16 @@ class _SublocationAlertDialogBoxState extends State<SublocationAlertDialogBox> {
                     });
 
                     try {
-                      // throw Exception(
-                      //     'Error adding sublocation'); // remove this later
-                      await _locationsDataService.addSublocation(
-                          widget.locationId, widget.sublocationName);
-                      FocusScope.of(context).unfocus();
-                      widget.onLocationAdded();
+                      // Call the addAsset method with the optional description
+                      await _assetsDataService.addAsset(
+                        widget.assetName,
+                        _assetDescController.text, // Pass the description text
+                        widget.assetTypeId,
+                      );
+                      widget.onAssetAdded();
                     } catch (e) {
-                      print('Error adding department: $e');
-
+                      print('Error adding asset: $e');
                       _showErrorDialog(e.toString());
-
                       return;
                     } finally {
                       setState(() {
@@ -509,7 +493,7 @@ class _SublocationAlertDialogBoxState extends State<SublocationAlertDialogBox> {
                     }
 
                     Navigator.of(context).pop();
-                    ToastService.showDepartmentAddedSnackBar(context);
+                    ToastService.showAssetAddedSnackBar(context);
                   },
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.03,

@@ -145,7 +145,8 @@ class _UserFormState extends State<UserForm> {
             .getSubIncidentPostData(SelectedIncidentType!);
       }
 
-      Provider.of<LocationProvider>(context, listen: false).fetchLocations();
+      Provider.of<LocationProviderClass>(context, listen: false)
+          .fetchLocations();
       if (SelectedLocationType != null) {
         Provider.of<SubLocationProviderClass>(context, listen: false)
             .getSubLocationPostData(SelectedLocationType!);
@@ -696,7 +697,7 @@ class _UserFormState extends State<UserForm> {
                                         ),
                                       ],
                                     )),
-                                Consumer<LocationProvider>(
+                                Consumer<LocationProviderClass>(
                                   builder: (context, selectedVal, child) {
                                     if (selectedVal.loading) {
                                       return const Center(
@@ -1180,7 +1181,7 @@ class _UserFormState extends State<UserForm> {
                                                             listen: false)
                                                         .selectedIncidentType =
                                                     null;
-                                                Provider.of<LocationProvider>(
+                                                Provider.of<LocationProviderClass>(
                                                         context,
                                                         listen: false)
                                                     .selectedLocation = null;

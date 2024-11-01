@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:safify/models/location.dart';
 import 'package:safify/repositories/location_repository.dart';
 
-class LocationProvider extends ChangeNotifier {
+class LocationProviderClass extends ChangeNotifier {
   List<Location>? allLocations;
   bool loading = false;
   String? selectedLocation;

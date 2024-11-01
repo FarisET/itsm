@@ -12,6 +12,7 @@ import 'package:safify/Admin%20Module/providers/asset_log_provider.dart';
 import 'package:safify/Admin%20Module/providers/delete_action_report_provider.dart';
 import 'package:safify/Admin%20Module/providers/delete_user_report_provider.dart';
 import 'package:safify/Admin%20Module/providers/fetch_countOfLocations_provider%20copy.dart';
+import 'package:safify/Admin%20Module/providers/fetch_locations_server.dart';
 import 'package:safify/Admin%20Module/providers/search_solution_forum_provider.dart';
 import 'package:safify/User%20Module/pages/home_page.dart';
 import 'package:safify/User%20Module/pages/splash_screen.dart';

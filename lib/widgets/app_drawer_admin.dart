@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safify/Admin%20Module/admin_pages/add_incident_type_page.dart';
+import 'package:safify/Admin%20Module/admin_pages/add_asset_type_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/add_location_page.dart';
-import 'package:safify/Admin%20Module/admin_pages/add_subincident_type.dart';
+import 'package:safify/Admin%20Module/admin_pages/add_asset_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/add_sublocation_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/search_solution_forum_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/view_all_logs_page.dart';
@@ -144,7 +144,7 @@ class AppDrawer extends StatelessWidget {
                   leading: Icon(Icons.type_specimen_outlined,
                       color: Theme.of(context).secondaryHeaderColor),
                   title: Text(
-                    'Add Category',
+                    'Add Asset',
                     style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: mainHeaderSize,
@@ -158,7 +158,7 @@ class AppDrawer extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Text(
-                            'Add Category',
+                            'Add Asset Type',
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: mainHeaderSize,
@@ -172,14 +172,14 @@ class AppDrawer extends StatelessWidget {
                       ),
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddIncidentTypePage()));
+                            builder: (context) => AddAssetTypePage()));
                       },
                     ),
                     ListTile(
                       title: Row(
                         children: [
                           Text(
-                            'Add Subcategory',
+                            'Add Asset',
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: mainHeaderSize,
@@ -193,17 +193,12 @@ class AppDrawer extends StatelessWidget {
                       ),
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddSubIncidentTypePage()));
+                            builder: (context) => AddAssetPage()));
                         // Navigate to Add Incident Subtype page
                         //  Navigator.pushNamed(context, '/addIncidentSubtype');
                       },
                     ),
                   ],
-                  // onTap: () {
-                  //   // ExpansionTile()
-                  //   // Navigate to Add Category page
-                  //   //  Navigator.pushNamed(context, '/addCategory');
-                  // },
                 ),
                 ListTile(
                   horizontalTitleGap: 0,
@@ -218,15 +213,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ),
                   onTap: () async {
-                    // Navigate to Add Category page
-                    //  Navigator.pushNamed(context, '/addCategory');
                     final pdfService = PDFDownloadService();
-                    // await pdfService.downloadPDF(
-                    //     'https://api.arya.ai/images/test.pdf', "dummy.pdf");
-                    // // await Future.delayed(Duration(seconds: 1));
-                    // print("Download PDF");
-                    // await pdfService.getPdf(null, null, null);
-                    // Navigator.of(context).pop();
                     await _showDateInputDialog(context, pdfService);
                   },
                 ),
@@ -303,8 +290,6 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             horizontalTitleGap: 0,
-            // leading: Icon(Icons.settings_outlined,
-            //     color: Theme.of(context).secondaryHeaderColor),
             title: Text(
               '',
               style: TextStyle(

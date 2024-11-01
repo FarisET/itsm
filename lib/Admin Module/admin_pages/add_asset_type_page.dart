@@ -2,56 +2,67 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Required for LengthLimitingTextInputFormatter
 import 'package:provider/provider.dart';
+import 'package:safify/Admin%20Module/providers/admin_asset_provider.dart';
+import 'package:safify/Admin%20Module/providers/fetch_locations_server.dart';
 import 'package:safify/User%20Module/providers/location_provider.dart';
+import 'package:safify/api/asset_data_services.dart';
 import 'package:safify/api/locations_data_service.dart';
 import 'package:safify/services/toast_service.dart';
 
-class AddLocationPage extends StatefulWidget {
-  const AddLocationPage({super.key});
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Required for LengthLimitingTextInputFormatter
+import 'package:provider/provider.dart';
+import 'package:safify/Admin%20Module/providers/admin_asset_provider.dart';
+import 'package:safify/services/toast_service.dart';
+
+class AddAssetTypePage extends StatefulWidget {
+  const AddAssetTypePage({super.key});
 
   @override
-  State<AddLocationPage> createState() => _AddLocationPageState();
+  State<AddAssetTypePage> createState() => _AddAssetTypePageState();
 }
 
-class _AddLocationPageState extends State<AddLocationPage> {
-  final TextEditingController _locationController = TextEditingController();
+class _AddAssetTypePageState extends State<AddAssetTypePage> {
+  final TextEditingController _assetTypeController = TextEditingController();
   String _searchQuery = '';
 
   @override
   void dispose() {
-    _locationController.dispose();
+    _assetTypeController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    Provider.of<LocationProviderClass>(context, listen: false).fetchLocations();
-    _locationController.addListener(_onSearchChanged);
+    Provider.of<AdminAssetProvider>(context, listen: false)
+        .fetchAssetTypesandSubTypes();
+    _assetTypeController.addListener(_onSearchChanged);
   }
 
   void _onSearchChanged() {
     setState(() {
-      _searchQuery = _locationController.text;
+      _searchQuery = _assetTypeController.text;
     });
   }
 
-  void _showConfirmationDialog(String locationName) {
+  void _showConfirmationDialog(String assetTypeName) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialogBox(
-          locationName: locationName,
-          onLocationAdded: _refreshLocations, // Call refresh function
+          assetTypeName: assetTypeName,
+          onAssetTypeAdded: _refreshAssetTypes, // Call refresh function
         );
       },
     );
   }
 
-  // New function to refresh locations list after adding a new location
-  void _refreshLocations() {
-    Provider.of<LocationProviderClass>(context, listen: false)
-        .SyncDbAndFetchLocations();
+  // New function to refresh asset types list after adding a new asset type
+  void _refreshAssetTypes() {
+    Provider.of<AdminAssetProvider>(context, listen: false)
+        .fetchAssetTypesandSubTypes();
     setState(() {});
   }
 
@@ -70,7 +81,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
             },
           ),
           title: Text(
-            "Add Location",
+            "Add Asset Type",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -96,11 +107,11 @@ class _AddLocationPageState extends State<AddLocationPage> {
                           const SizedBox(height: 10.0),
                           Row(
                             children: [
-                              Icon(CupertinoIcons.location_solid,
+                              Icon(CupertinoIcons.briefcase,
                                   color: Colors.black, size: 20.0),
                               SizedBox(width: 10.0),
                               Text(
-                                "New Location Name",
+                                "Name",
                                 style: TextStyle(
                                   color: Theme.of(context).secondaryHeaderColor,
                                   fontWeight: FontWeight.bold,
@@ -110,7 +121,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
                           ),
                           const SizedBox(height: 10.0),
                           TextField(
-                            controller: _locationController,
+                            controller: _assetTypeController,
                             textInputAction: TextInputAction.done,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(50),
@@ -120,7 +131,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
                                   FloatingLabelBehavior.never,
                               fillColor: Colors.white,
                               filled: true,
-                              labelText: 'New Location Name',
+                              hintText: 'enter asset type...',
+                              labelText: 'New Asset Type Name',
                               labelStyle: const TextStyle(
                                 fontSize: 14,
                               ),
@@ -132,49 +144,51 @@ class _AddLocationPageState extends State<AddLocationPage> {
                           ),
                           const SizedBox(height: 20.0),
 
-                          // ListView for displaying fetched locations with search functionality
+                          // ListView for displaying fetched asset types with search functionality
                           Expanded(
-                            child: Consumer<LocationProviderClass>(
-                              builder: (context, locationProvider, child) {
-                                if (locationProvider.allLocations == null) {
+                            child: Consumer<AdminAssetProvider>(
+                              builder: (context, assetProvider, child) {
+                                if (assetProvider.assetTypeList == null) {
                                   return const Center(
                                     child: CircularProgressIndicator(),
                                   );
                                 }
-                                if (locationProvider.allLocations!.isEmpty) {
+                                if (assetProvider.assetTypeList!.isEmpty) {
                                   return const Center(
-                                    child: Text('No locations available.'),
+                                    child: Text('No asset types available.'),
                                   );
                                 }
 
-                                final filteredLocations = locationProvider
-                                    .allLocations!
-                                    .where((location) => location.locationName
+                                final filteredAssetTypes = assetProvider
+                                    .assetTypeList!
+                                    .where((type) => type.assetTypeDesc
                                         .toLowerCase()
                                         .contains(_searchQuery.toLowerCase()))
                                     .toList();
 
-                                return filteredLocations.isEmpty
+                                return filteredAssetTypes.isEmpty
                                     ? const Center(
-                                        child: Text('No matching locations.'),
+                                        child: Text('No matching asset types.'),
                                       )
                                     : Scrollbar(
                                         thumbVisibility: true,
                                         child: ListView.builder(
-                                          itemCount: filteredLocations.length,
+                                          itemCount: filteredAssetTypes.length,
                                           itemBuilder: (context, index) {
-                                            final location =
-                                                filteredLocations[index];
+                                            final assetType =
+                                                filteredAssetTypes[index];
                                             return ListTile(
                                               title:
-                                                  Text(location.locationName),
+                                                  Text(assetType.assetTypeDesc),
                                               onTap: () {
-                                                locationProvider.setLocation(
-                                                    location.locationName);
+                                                assetProvider
+                                                    .setSelectedAssetType(
+                                                        assetType
+                                                            .assetTypeDesc);
                                               },
-                                              selected: locationProvider
-                                                      .selectedLocation ==
-                                                  location.locationName,
+                                              selected: assetProvider
+                                                      .selectedAssetType ==
+                                                  assetType.assetTypeDesc,
                                             );
                                           },
                                         ),
@@ -195,23 +209,23 @@ class _AddLocationPageState extends State<AddLocationPage> {
                                 ),
                               ),
                               onPressed: () {
-                                final locationName = _locationController.text;
-                                if (locationName.isNotEmpty) {
-                                  _showConfirmationDialog(locationName);
+                                final assetTypeName = _assetTypeController.text;
+                                if (assetTypeName.isNotEmpty) {
+                                  _showConfirmationDialog(assetTypeName);
                                   FocusScope.of(context)
                                       .unfocus(); // Dismiss the keyboard
-                                  _locationController.clear(); // Clear input
+                                  _assetTypeController.clear(); // Clear input
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       duration: Duration(seconds: 1),
-                                      content:
-                                          Text('Please enter a location name'),
+                                      content: Text(
+                                          'Please enter an asset type name'),
                                     ),
                                   );
                                 }
                               },
-                              child: const Text('Add Location'),
+                              child: const Text('Add Asset Type'),
                             ),
                           ),
                         ],
@@ -229,13 +243,13 @@ class _AddLocationPageState extends State<AddLocationPage> {
 }
 
 class AlertDialogBox extends StatefulWidget {
-  final String locationName;
-  final VoidCallback onLocationAdded;
+  final String assetTypeName;
+  final VoidCallback onAssetTypeAdded;
 
   AlertDialogBox({
     super.key,
-    required this.locationName,
-    required this.onLocationAdded,
+    required this.assetTypeName,
+    required this.onAssetTypeAdded,
   });
 
   @override
@@ -243,8 +257,8 @@ class AlertDialogBox extends StatefulWidget {
 }
 
 class _AlertDialogBoxState extends State<AlertDialogBox> {
-  final LocationsDataService _locationsDataService = LocationsDataService();
   bool isSubmitting = false;
+  AssetDataServices _assetDataServices = AssetDataServices();
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -272,13 +286,13 @@ class _AlertDialogBoxState extends State<AlertDialogBox> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      title: const Text('Confirm Location'),
+      title: const Text('Confirm Asset Type'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Are you sure you want to add this new location:'),
+          const Text('Are you sure you want to add this new asset type:'),
           const SizedBox(height: 10.0),
-          Text(widget.locationName,
+          Text(widget.assetTypeName,
               style:
                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0)),
           const SizedBox(height: 20.0),
@@ -305,9 +319,10 @@ class _AlertDialogBoxState extends State<AlertDialogBox> {
                     });
 
                     try {
-                      await _locationsDataService
-                          .addLocation(widget.locationName);
-                      widget.onLocationAdded(); // Call callback to refresh
+                      await _assetDataServices
+                          .addAssetType(widget.assetTypeName);
+                      widget.onAssetTypeAdded();
+                      Navigator.of(context).pop();
                     } on Exception catch (e) {
                       setState(() {
                         isSubmitting = false;
@@ -320,25 +335,18 @@ class _AlertDialogBoxState extends State<AlertDialogBox> {
                       isSubmitting = false;
                     });
 
-                    Navigator.of(context).pop();
-                    ToastService.showLocationAddedSnackBar(context);
+                    ToastService.showAssetTypeAddedSnackBar(context);
                   },
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.03,
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Center(
                       child: isSubmitting
-                          ? SizedBox(
-                              width: MediaQuery.of(context).size.height * 0.025,
-                              height:
-                                  MediaQuery.of(context).size.height * 0.025,
-                              child: const CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
                             )
                           : const Text(
-                              'Add',
+                              'Yes',
                               style: TextStyle(color: Colors.white),
                             ),
                     ),
