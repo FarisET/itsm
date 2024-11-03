@@ -47,7 +47,6 @@ class _UserFormState extends State<UserForm> {
   List<String> dropdownMenuEntries = [];
   final TextEditingController _textFieldController = TextEditingController();
   bool _confirmedExit = false;
-  bool isFirstIncidentDropdownSelected = false;
   bool isFirstLocationDropdownSelected = false;
   XFile? _imageFile;
   final ImageUtils _imageService = ImageUtils();
@@ -138,13 +137,6 @@ class _UserFormState extends State<UserForm> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Provider.of<IncidentProviderClass>(context, listen: false)
-          .getIncidentPostData();
-      if (SelectedIncidentType != null) {
-        Provider.of<SubIncidentProviderClass>(context, listen: false)
-            .getSubIncidentPostData(SelectedIncidentType!);
-      }
-
       Provider.of<LocationProviderClass>(context, listen: false)
           .fetchLocations();
       if (SelectedLocationType != null) {
@@ -269,226 +261,6 @@ class _UserFormState extends State<UserForm> {
                                     color: Theme.of(context).highlightColor,
                                   ),
                                 ),
-                                Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          'Categorize your issue',
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .secondaryHeaderColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const Text(
-                                          '*',
-                                          style: TextStyle(
-                                            color: Colors
-                                                .red, // Set the asterisk color to red
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                Consumer<IncidentProviderClass>(
-                                  builder: (context, selectedVal, child) {
-                                    if (selectedVal.loading) {
-                                      return const Center(
-                                        child:
-                                            CircularProgressIndicator(), // Display a loading indicator
-                                      );
-                                    } else {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Theme.of(context)
-                                                  .highlightColor),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: FormField<String>(
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Kindly select a support cateogry';
-                                            }
-                                            return null;
-                                          },
-                                          builder:
-                                              (FormFieldState<String> state) {
-                                            return DropdownButton<String>(
-                                              value: selectedVal
-                                                  .selectedIncidentType,
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .secondaryHeaderColor,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              isExpanded: true,
-                                              icon: Icon(Icons.arrow_drop_down,
-                                                  color: Theme.of(context)
-                                                      .secondaryHeaderColor),
-                                              underline: Container(),
-                                              items: [
-                                                DropdownMenuItem<String>(
-                                                  value:
-                                                      null, // Placeholder value
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 10.0,
-                                                        vertical: 8.0),
-                                                    child: Text(
-                                                      'Support Category',
-                                                      style: TextStyle(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .secondaryHeaderColor,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          fontSize: 14),
-                                                    ),
-                                                  ),
-                                                ),
-                                                if (selectedVal.incidentTypes !=
-                                                    null)
-                                                  ...selectedVal.incidentTypes!
-                                                      .map((type) {
-                                                    return buildIncidentMenuItem(
-                                                        type);
-                                                  }).toList(),
-                                              ],
-                                              onChanged: (v) {
-                                                selectedVal.setIncidentType(v);
-                                                incidentType = v!;
-                                                SelectedIncidentType = v;
-                                                Provider.of<SubIncidentProviderClass>(
-                                                        context,
-                                                        listen: false)
-                                                    .selectedSubIncident = null;
-                                                Provider.of<SubIncidentProviderClass>(
-                                                        context,
-                                                        listen: false)
-                                                    .getSubIncidentPostData(v);
-                                                isFirstIncidentDropdownSelected =
-                                                    v != null;
-                                                setState(() {});
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                if (isFirstIncidentDropdownSelected)
-                                  Consumer<SubIncidentProviderClass>(
-                                      builder: (context, selectedValue, child) {
-                                    if (SelectedIncidentType != null) {
-                                      if (selectedValue.loading) {
-                                        return const Center(
-                                          child:
-                                              CircularProgressIndicator(), // Display a loading indicator
-                                        );
-                                      } else {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Theme.of(context)
-                                                    .highlightColor),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: FormField<String>(
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Sub Cateogry is required';
-                                              }
-                                              return null;
-                                            },
-                                            builder:
-                                                (FormFieldState<String> state) {
-                                              return DropdownButton<String>(
-                                                value: selectedValue
-                                                    .selectedSubIncident,
-                                                style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .secondaryHeaderColor,
-                                                  fontWeight: FontWeight.normal,
-                                                ),
-                                                isExpanded: true,
-                                                icon: Icon(
-                                                    Icons.arrow_drop_down,
-                                                    color: Theme.of(context)
-                                                        .secondaryHeaderColor),
-                                                underline: Container(),
-                                                items: [
-                                                  DropdownMenuItem<String>(
-                                                    value:
-                                                        null, // Placeholder value
-                                                    child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal:
-                                                                    10.0,
-                                                                vertical: 8.0),
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              'Sub Category',
-                                                              style: TextStyle(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .secondaryHeaderColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                  fontSize: 14),
-                                                            ),
-                                                            const Text(
-                                                              '*',
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .red, // Set the asterisk color to red
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )),
-                                                  ),
-                                                  if (selectedValue
-                                                          .subIncidentPost !=
-                                                      null)
-                                                    ...selectedValue
-                                                        .subIncidentPost!
-                                                        .map((type) {
-                                                      return buildSubIncidentMenuItem(
-                                                          type);
-                                                    }).toList(),
-                                                ],
-                                                onChanged: (v) {
-                                                  selectedValue
-                                                      .setSubIncidentType(v);
-                                                  incidentSubType = v!;
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      }
-                                    } else {
-                                      return const Text(
-                                          'Please select a category first',
-                                          style: TextStyle(
-                                            color: Colors.red,
-                                          ));
-                                    }
-                                  }),
                               ],
                             ),
                           ),
@@ -1145,10 +917,9 @@ class _UserFormState extends State<UserForm> {
                               onPressed: isSubmitting
                                   ? null
                                   : () async {
-                                      if (isFirstIncidentDropdownSelected &&
-                                          isFirstLocationDropdownSelected &&
+                                      if (isFirstLocationDropdownSelected &&
                                           isRiskLevelSelected &&
-                                          (incidentSubType != '') &&
+                                          // (incidentSubType != '') &&
                                           (SelectedSubLocationType != '') &&
                                           (selectedAssetSubType != '')) {
                                         print("pressed");
@@ -1306,162 +1077,6 @@ class _UserFormState extends State<UserForm> {
     }
   }
 
-  // Future<void> _pickImageGallery1(BuildContext context) async {
-  //   ImageUtils imageUtils = ImageUtils();
-
-  //   // Show loading dialog while picking image
-  //   Alerts.showLoadingDialog(context);
-
-  //   File? image = await imageUtils.pickImageFromGallery();
-
-  //   // Dismiss loading dialog after picking image
-  //   Navigator.of(context, rootNavigator: true).pop();
-
-  //   if (image != null) {
-  //     // Show alert dialog
-  //     bool shouldNavigate = await showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return AlertDialog(
-  //           title: const Text('Draw on Image?'),
-  //           content: const Text('Circle key objects in your image.'),
-  //           actions: <Widget>[
-  //             TextButton(
-  //               child: const Text('No'),
-  //               onPressed: () {
-  //                 Navigator.of(context)
-  //                     .pop(false); // Return false if 'No' is pressed
-  //               },
-  //             ),
-  //             TextButton(
-  //               child: const Text('Yes'),
-  //               onPressed: () {
-  //                 Navigator.of(context)
-  //                     .pop(true); // Return true if 'Yes' is pressed
-  //               },
-  //             )
-  //           ],
-  //         );
-  //       },
-  //     );
-
-  //     if (shouldNavigate == true) {
-  //       // Create an ImageStream from the selected image
-  //       final ImageStream imageStream =
-  //           FileImage(image).resolve(const ImageConfiguration());
-
-  //       final editedImage = await Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => DrawingCanvas(imageStream: imageStream),
-  //         ),
-  //       );
-
-  //       if (editedImage != null) {
-  //         // Show loading dialog while converting edited image
-  //         Alerts.showLoadingDialog(context);
-
-  //         File? finalImg = await imageUtils.imageToMemoryFile(editedImage);
-
-  //         // Dismiss loading dialog after converting edited image
-  //         Navigator.of(context, rootNavigator: true).pop();
-
-  //         setState(() {
-  //           returnedImage = finalImg;
-  //         });
-  //         //  Fluttertoast.showToast(msg: 'Image edited and saved');
-  //       } else {
-  //         setState(() {
-  //           returnedImage = image;
-  //         });
-  //         Fluttertoast.showToast(msg: 'Image editing failed');
-  //       }
-  //     } else {
-  //       //Fluttertoast.showToast(msg: 'Image editing cancelled');
-  //     }
-  //   } else {
-  //     Fluttertoast.showToast(msg: 'No Image Selected');
-  //   }
-  // }
-
-  // Future<void> _pickImageCamera1(BuildContext context) async {
-  //   ImageUtils imageUtils = ImageUtils();
-
-  //   // Show loading dialog while picking image
-  //   Alerts.showLoadingDialog(context);
-
-  //   File? image = await imageUtils.pickImageFromCamera();
-
-  //   // Dismiss loading dialog after picking image
-  //   Navigator.of(context, rootNavigator: true).pop();
-
-  //   if (image != null) {
-  //     // Show alert dialog
-  //     bool shouldNavigate = await showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return AlertDialog(
-  //           title: const Text('Draw on Image?'),
-  //           content: const Text('Circle key objects in your image.'),
-  //           actions: <Widget>[
-  //             TextButton(
-  //               child: const Text('No'),
-  //               onPressed: () {
-  //                 Navigator.of(context)
-  //                     .pop(false); // Return false if 'No' is pressed
-  //               },
-  //             ),
-  //             TextButton(
-  //               child: const Text('Yes'),
-  //               onPressed: () {
-  //                 Navigator.of(context)
-  //                     .pop(true); // Return true if 'Yes' is pressed
-  //               },
-  //             )
-  //           ],
-  //         );
-  //       },
-  //     );
-
-  //     if (shouldNavigate == true) {
-  //       // Create an ImageStream from the selected image
-  //       final ImageStream imageStream =
-  //           FileImage(image).resolve(const ImageConfiguration());
-
-  //       final editedImage = await Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => DrawingCanvas(imageStream: imageStream),
-  //         ),
-  //       );
-
-  //       if (editedImage != null) {
-  //         // Show loading dialog while converting edited image
-  //         Alerts.showLoadingDialog(context);
-
-  //         File? finalImg = await imageUtils.imageToMemoryFile(editedImage);
-
-  //         // Dismiss loading dialog after converting edited image
-  //         Navigator.of(context, rootNavigator: true).pop();
-
-  //         setState(() {
-  //           returnedImage = finalImg;
-  //         });
-  //         // Fluttertoast.showToast(msg: 'Image edited and saved');
-  //       } else {
-  //         setState(() {
-  //           returnedImage = image;
-  //         });
-  //         Fluttertoast.showToast(msg: 'Image editing failed');
-  //       }
-  //     } else {
-  //       //   Fluttertoast.showToast(msg: 'Image editing cancelled');
-  //     }
-  //   } else {
-  //     Fluttertoast.showToast(msg: 'No Image Selected');
-  //   }
-  // }
-
   void _showBottomSheet() {
     showModalBottomSheet(
         context: context,
@@ -1543,7 +1158,7 @@ class _UserFormState extends State<UserForm> {
 
       final userFormReport = UserReportFormDetails(
           sublocationId: userFormState.SelectedSubLocationType,
-          incidentSubtypeId: userFormState.incidentSubType,
+          // incidentSubtypeId: userFormState.incidentSubType,
           description: userFormState.description,
           date: userFormState.date,
           criticalityId: userFormState.risklevel,
@@ -1567,7 +1182,7 @@ class _UserFormState extends State<UserForm> {
         int flag = await reportServices.uploadReportWithImage(
             userFormState._imageFile?.path,
             userFormState.SelectedSubLocationType,
-            userFormState.incidentSubType,
+            // userFormState.incidentSubType,
             userFormState.description,
             userFormState.date,
             userFormState.risklevel,
@@ -1582,7 +1197,7 @@ class _UserFormState extends State<UserForm> {
 
         final userFormReport = UserReportFormDetails(
             sublocationId: userFormState.SelectedSubLocationType,
-            incidentSubtypeId: userFormState.incidentSubType,
+            // incidentSubtypeId: userFormState.incidentSubType,
             description: userFormState.description,
             date: userFormState.date,
             criticalityId: userFormState.risklevel,
@@ -1603,7 +1218,7 @@ class _UserFormState extends State<UserForm> {
         ReportServices reportServices = ReportServices();
         int flag = await reportServices.postReport(
             userFormState.SelectedSubLocationType,
-            userFormState.incidentSubType,
+            //userFormState.incidentSubType,
             userFormState.description,
             userFormState.date,
             userFormState.risklevel,
@@ -1615,7 +1230,7 @@ class _UserFormState extends State<UserForm> {
       } catch (e) {
         final userFormReport = UserReportFormDetails(
             sublocationId: userFormState.SelectedSubLocationType,
-            incidentSubtypeId: userFormState.incidentSubType,
+            // incidentSubtypeId: userFormState.incidentSubType,
             description: userFormState.description,
             date: userFormState.date,
             criticalityId: userFormState.risklevel,

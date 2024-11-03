@@ -104,7 +104,9 @@ class DatabaseHelper {
               incident_subtype_description TEXT,
               image TEXT,
               incident_criticality_level TEXT,
-              status TEXT
+              status TEXT,
+              asset_name,
+              asset_no
             )
           ''');
         await db.execute('''
@@ -119,7 +121,9 @@ class DatabaseHelper {
               incident_criticality_level TEXT,
               incident_criticality_id TEXT,
               image TEXT,
-              status TEXT
+              status TEXT,
+              asset_name,
+              asset_no
             )
           ''');
 
@@ -140,7 +144,9 @@ class DatabaseHelper {
               surrounding_image TEXT,
               date_time TEXT,
               status TEXT,
-              incident_subtype_description TEXT
+              incident_subtype_description TEXT,
+              asset_name,
+              asset_no
             )
         ''');
 
@@ -156,7 +162,9 @@ class DatabaseHelper {
               incident_criticality_level TEXT,
               incident_criticality_id TEXT,
               image TEXT,
-              status TEXT
+              status TEXT,
+              asset_name,
+              asset_no
             )
           ''');
 

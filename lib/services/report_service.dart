@@ -199,7 +199,7 @@ class ReportServices {
 
   Future<int> postReport(
       String sublocation,
-      String incidentSubType,
+      //String incidentSubType,
       String description,
       DateTime date,
       String risklevel,
@@ -222,7 +222,7 @@ class ReportServices {
         body: jsonEncode(
           <String, dynamic>{
             "image": null,
-            "incident_subtype_id": incidentSubType,
+            //  "incident_subtype_id": incidentSubType,
             "sub_location_id": sublocation,
             "report_description": description,
             "date_time": date
@@ -264,7 +264,7 @@ class ReportServices {
       // File? imageFile,
       String? filePath,
       String sublocationId,
-      String incidentSubtypeId,
+      // String incidentSubtypeId,
       String description,
       DateTime date,
       String criticalityId,
@@ -285,7 +285,7 @@ class ReportServices {
       request.fields['date_time'] =
           date.toLocal().toIso8601String().split(".")[0];
       request.fields['sub_location_id'] = sublocationId;
-      request.fields['incident_subtype_id'] = incidentSubtypeId;
+      // request.fields['incident_subtype_id'] = incidentSubtypeId;
       request.fields['incident_criticality_id'] = criticalityId;
       request.fields['asset_no'] = assetNo;
       request.files.add(await http.MultipartFile.fromPath(

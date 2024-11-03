@@ -255,7 +255,7 @@ class _HomePage2State extends State<HomePage2> {
           uploadSuccess = await reportService.uploadReportWithImage(
               report.imagePath,
               report.sublocationId,
-              report.incidentSubtypeId,
+              //  report.incidentSubtypeId,
               report.description,
               report.date,
               report.criticalityId,
@@ -263,7 +263,7 @@ class _HomePage2State extends State<HomePage2> {
         } else {
           uploadSuccess = await reportService.postReport(
               report.sublocationId,
-              report.incidentSubtypeId,
+              //   report.incidentSubtypeId,
               report.description,
               report.date,
               report.criticalityId,

@@ -1,7 +1,7 @@
 class UserReportFormDetails {
   final String? imagePath;
   final String sublocationId;
-  final String incidentSubtypeId;
+  // final String incidentSubtypeId;
   final String description;
   final DateTime date;
   final String criticalityId;
@@ -10,7 +10,7 @@ class UserReportFormDetails {
   UserReportFormDetails(
       {this.imagePath,
       required this.sublocationId,
-      required this.incidentSubtypeId,
+      //    required this.incidentSubtypeId,
       required this.description,
       required this.date,
       required this.criticalityId,
@@ -19,7 +19,7 @@ class UserReportFormDetails {
   Map<String, dynamic> toJson() {
     return {
       'sublocationId': sublocationId,
-      'incidentSubtypeId': incidentSubtypeId,
+      //   'incidentSubtypeId': incidentSubtypeId,
       'description': description,
       'date': date.toIso8601String(),
       'criticalityId': criticalityId,
@@ -31,7 +31,7 @@ class UserReportFormDetails {
   factory UserReportFormDetails.fromJson(Map<String, dynamic> json) {
     return UserReportFormDetails(
         sublocationId: json['sublocationId'],
-        incidentSubtypeId: json['incidentSubtypeId'],
+        //  incidentSubtypeId: json['incidentSubtypeId'],
         description: json['description'],
         date: DateTime.parse(json['date']),
         criticalityId: json['criticalityId'],
@@ -41,6 +41,8 @@ class UserReportFormDetails {
 
   @override
   String toString() {
-    return 'UserFormReport{sublocationId: $sublocationId, incidentSubtypeId: $incidentSubtypeId, description: $description, date: $date, criticalityId: $criticalityId, imagePath: $imagePath, asset_no: $assetNo}';
+    return 'UserFormReport{sublocationId: $sublocationId, description: $description, date: $date, criticalityId: $criticalityId, imagePath: $imagePath, asset_no: $assetNo}';
+
+    //incidentSubtypeId: $incidentSubtypeId,
   }
 }

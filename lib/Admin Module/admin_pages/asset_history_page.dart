@@ -15,12 +15,14 @@ class AssetHistoryPage extends StatefulWidget {
 class _AssetHistoryPageState extends State<AssetHistoryPage> {
   String _searchQuery = '';
   List filteredAssetHistory = [];
+  List filteredAssetLog = [];
 
   @override
   void initState() {
     super.initState();
     // Initialize the filtered list
     filteredAssetHistory = [];
+    filteredAssetLog = [];
   }
 
   void filterAssetHistory(String query, List assetHistory) {
