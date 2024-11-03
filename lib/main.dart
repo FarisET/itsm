@@ -62,15 +62,6 @@ void main() async {
   backgroundTaskManager.registerSyncUserFormTask();
   backgroundTaskManager.registerSyncActionFormTask();
 
-  // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  //     FlutterLocalNotificationsPlugin();
-
-  // await Notifications.initialize(flutterLocalNotificationsPlugin);
-
-  // var androidInitSettings =
-  //     AndroidInitializationSettings('@mipmap/ic_launcher');
-  // var iosinitSettings = DarwinInitializationSettings();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -81,38 +72,6 @@ void main() async {
   notificationServices.firebaseMessagingInit();
   FirebaseMessaging.onBackgroundMessage(_handleBGMessage);
 
-  // FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  // Request permission for notifications
-  // NotificationSettings settings = await messaging.requestPermission(
-  //   alert: true,
-  //   announcement: false,
-  //   badge: true,
-  //   carPlay: false,
-  //   criticalAlert: false,
-  //   provisional: false,
-  //   sound: true,
-  // );
-
-  // Update notification presentation options for foreground messages
-  // await messaging.setForegroundNotificationPresentationOptions(
-  //   alert: true, // Display an alert notification
-  //   badge: true, // Update the app's badge
-  //   sound: true, // Play a sound for the notification
-  // );
-
-  // print('User granted permission: ${settings.authorizationStatus}');
-
-  // RemoteMessage? initialMessage = await messaging.getInitialMessage();
-  // if (initialMessage != null) {
-  //   handleNotificationMessage(initialMessage);
-  // }
-
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // await FirebaseMessaging.instance.setAutoInitEnabled(true);
-
-  //FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging.instance.requestPermission();
 
   UserServices userServices = UserServices();
@@ -142,34 +101,18 @@ void main() async {
         const LoginPage(); // Handle the case where user session does not exist
   }
 
-  runApp(MyApp(initialScreen: initialScreen));
-  // runApp(DevicePreview(
-  //   enabled: true,
-  //   builder: (BuildContext context) => MyApp(
-  //     initialScreen: initialScreen,
-  //   ),
-  // ));
+  runApp(
+    DevicePreview(
+      enabled: !kReleaseMode, // Only enable preview in debug mode
+      builder: (context) => MyApp(initialScreen: initialScreen),
+    ),
+  );
 }
 
 Future<void> _handleBGMessage(RemoteMessage message) async {
   MessageHandlerService.printMessage(message);
   MessageHandlerService.handleBackgroundMessage(message);
 }
-
-// void handleNotificationMessage(RemoteMessage message) {
-//   // Your notification handling logic here
-//   // print('Message data: ${message.data}');
-//   if (message.notification != null) {
-//     // print('Message also contained a notification: ${message.notification}');
-//   }
-// }
-
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//  Notifications notifications = Notifications();
-//   await Firebase.initializeApp();
-//   Notifications.showNotification(
-//       message); // Show notification when in background
-// }
 
 customAnimations animate = customAnimations();
 
@@ -186,8 +129,8 @@ class MyApp extends StatelessWidget {
             create: (context) => IncidentProviderClass()),
         ChangeNotifierProvider<SubIncidentProviderClass>(
             create: (context) => SubIncidentProviderClass()),
-        ChangeNotifierProvider<LocationProvider>(
-            create: (context) => LocationProvider()),
+        ChangeNotifierProvider<LocationProviderClass>(
+            create: (context) => LocationProviderClass()),
         ChangeNotifierProvider<SubLocationProviderClass>(
             create: (context) => SubLocationProviderClass()),
         ChangeNotifierProvider<DepartmentProviderClass>(

@@ -64,6 +64,14 @@ class UserReportTile extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (userReport.assetName != null)
+                      Row(
+                        children: [
+                          const Icon(Icons.laptop_mac_outlined,
+                              color: Colors.black, size: 20),
+                          Text(' ${userReport.assetName}')
+                        ],
+                      ),
                     Row(
                       children: [
                         const Icon(Icons.location_on_outlined,

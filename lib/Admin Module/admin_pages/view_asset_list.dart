@@ -104,22 +104,27 @@ class _ViewAssetState extends State<ViewAsset> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: ListTile(
-                                title: Text(asset.assetName ?? 'Unknown Asset'),
-                                subtitle: Text(
-                                    'Past Tickets: ${asset.assetIssueCount ?? 0}'),
-                                trailing: TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AssetHistoryPage(
-                                          assetNo: asset.assetNo!,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ListTile(
+                                  title:
+                                      Text(asset.assetName ?? 'Unknown Asset'),
+                                  subtitle: Text(
+                                      'Past Tickets: ${asset.assetIssueCount ?? 0}'),
+                                  trailing: TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AssetHistoryPage(
+                                            assetNo: asset.assetNo!,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  child: Text('View History'),
+                                      );
+                                    },
+                                    child: Text('View History'),
+                                  ),
                                 ),
                               ),
                             ),
