@@ -13,8 +13,6 @@ class LocationProviderClass extends ChangeNotifier {
     // loading = true;
     final locationsList = await _locationRepository.fetchLocationsFromDb();
     allLocations = locationsList;
-    // setLocation(locations);
-    // loading = false;
     notifyListeners();
   }
 

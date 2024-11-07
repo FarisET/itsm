@@ -43,9 +43,11 @@ class _UserFormState extends State<UserForm> {
   List<String> chipLabelsid = ['CRT1', 'CRT2', 'CRT3'];
   String incidentType = '';
   String incidentSubType = '';
+  String? selectedLocationId;
   List<String> dropdownMenuEntries = [];
   final TextEditingController _textFieldController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchControllerLoc = TextEditingController();
 
   bool _confirmedExit = false;
   bool isFirstLocationDropdownSelected = false;
@@ -57,6 +59,7 @@ class _UserFormState extends State<UserForm> {
   String? selectedAssetType = '';
   String? selectedAssetSubType = '';
   String? searchQuery = '';
+  String? searchQueryLoc = '';
 
   void _processData() {
     if (mounted) {
@@ -141,11 +144,9 @@ class _UserFormState extends State<UserForm> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       Provider.of<LocationProviderClass>(context, listen: false)
           .fetchLocations();
-      if (SelectedLocationType != null) {
-        Provider.of<SubLocationProviderClass>(context, listen: false)
-            .getSubLocationPostData(SelectedLocationType!);
-      }
 
+      Provider.of<SubLocationProviderClass>(context, listen: false)
+          .getAllSublocations();
       Provider.of<AssetProviderClass>(context, listen: false).loadAllAssets();
     });
   }
@@ -349,7 +350,7 @@ class _UserFormState extends State<UserForm> {
                                                     builder: (context) =>
                                                         SimpleDialog(
                                                       title: Text(
-                                                          'Select Asset Type'),
+                                                          'Filter Asset Type'),
                                                       children: assetProvider
                                                                   .assetTypeList !=
                                                               null
@@ -380,19 +381,6 @@ class _UserFormState extends State<UserForm> {
                                             ],
                                           ),
                                           const SizedBox(height: 10),
-                                          // if (!assetProvider.getSearchFocused())
-                                          //   Image.asset(
-                                          //     'assets/images/check-list.png',
-                                          //     width: MediaQuery.of(context)
-                                          //             .size
-                                          //             .width *
-                                          //         0.2,
-                                          //     height: MediaQuery.of(context)
-                                          //             .size
-                                          //             .width *
-                                          //         0.2,
-                                          //   ),
-                                          // const SizedBox(height: 10),
                                           if (assetProvider.getSearchFocused())
                                             Container(
                                               height:
@@ -420,6 +408,8 @@ class _UserFormState extends State<UserForm> {
                                                                 .setSelectedAssetSubtype(
                                                                     asset
                                                                         .assetNo);
+                                                            selectedAssetSubType =
+                                                                asset.assetNo;
                                                             _searchController
                                                                 .text = asset
                                                                     .assetName ??
@@ -427,6 +417,9 @@ class _UserFormState extends State<UserForm> {
                                                             assetProvider
                                                                 .setSearchFocus(
                                                                     false);
+                                                            FocusScope.of(
+                                                                    context)
+                                                                .unfocus();
                                                             setState(() {});
                                                           },
                                                           selected: assetProvider
@@ -457,236 +450,578 @@ class _UserFormState extends State<UserForm> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 12),
-                                ),
                                 Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          'Where are you located?',
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .secondaryHeaderColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Location',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .secondaryHeaderColor,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        const Text(
-                                          '*',
-                                          style: TextStyle(
-                                            color: Colors
-                                                .red, // Set the asterisk color to red
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                Consumer<LocationProviderClass>(
-                                  builder: (context, selectedVal, child) {
-                                    if (selectedVal.loading) {
+                                      ),
+                                      const Text(
+                                        '*',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Consumer2<SubLocationProviderClass,
+                                    LocationProviderClass>(
+                                  builder: (context, subLocationProvider,
+                                      locationProvider, child) {
+                                    if (subLocationProvider.loading ||
+                                        locationProvider.loading) {
                                       return const Center(
-                                        child:
-                                            CircularProgressIndicator(), // Display a loading indicator
+                                        child: CircularProgressIndicator(),
                                       );
                                     } else {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Theme.of(context)
-                                                  .highlightColor),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: FormField<String>(
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Location is required';
-                                            }
-                                            return null;
-                                          },
-                                          builder:
-                                              (FormFieldState<String> state) {
-                                            return DropdownButton<String>(
-                                              value:
-                                                  selectedVal.selectedLocation,
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .secondaryHeaderColor,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                              isExpanded: true,
-                                              icon: Icon(Icons.arrow_drop_down,
-                                                  color: Theme.of(context)
-                                                      .secondaryHeaderColor),
-                                              underline: Container(),
-                                              items: [
-                                                DropdownMenuItem<String>(
-                                                  value:
-                                                      null, // Placeholder value
-                                                  child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10.0,
-                                                          vertical: 8.0),
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            'Support Location',
-                                                            style: TextStyle(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .secondaryHeaderColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                fontSize: 14),
-                                                          ),
-                                                          const Text(
-                                                            '*',
-                                                            style: TextStyle(
-                                                              color: Colors
-                                                                  .red, // Set the asterisk color to red
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )),
+                                      return Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextFormField(
+                                                  controller:
+                                                      _searchControllerLoc,
+                                                  decoration: InputDecoration(
+                                                    labelText:
+                                                        'Search Location',
+                                                    prefixIcon:
+                                                        Icon(Icons.search),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                    ),
+                                                  ),
+                                                  onChanged: (query) {
+                                                    setState(() {
+                                                      searchQueryLoc = query;
+                                                    });
+                                                  },
+                                                  onTap: () {
+                                                    subLocationProvider
+                                                        .setSearchFocus(true);
+                                                  },
+                                                  onEditingComplete: () {
+                                                    subLocationProvider
+                                                        .setSearchFocus(false);
+                                                  },
                                                 ),
-                                                if (selectedVal.allLocations !=
-                                                    null)
-                                                  ...selectedVal.allLocations!
-                                                      .map((type) {
-                                                    return buildLocationMenuItem(
-                                                        type);
-                                                  }).toList(),
-                                              ],
-                                              onChanged: (v) {
-                                                selectedVal.setLocation(v);
-                                                //    incidentType = v!;
-                                                SelectedLocationType = v!;
-                                                Provider.of<SubLocationProviderClass>(
-                                                        context,
-                                                        listen: false)
-                                                    .selectedSubLocation = null;
-                                                Provider.of<SubLocationProviderClass>(
-                                                        context,
-                                                        listen: false)
-                                                    .getSubLocationPostData(v);
-                                                isFirstLocationDropdownSelected =
-                                                    v != null;
-                                                setState(() {});
-                                              },
-                                            );
-                                          },
-                                        ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.filter_list),
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            'Filter Location'),
+                                                        content: Container(
+                                                          width:
+                                                              double.maxFinite,
+                                                          child: ListView(
+                                                            shrinkWrap: true,
+                                                            children: locationProvider
+                                                                .allLocations!
+                                                                .map(
+                                                                    (location) {
+                                                              return ListTile(
+                                                                title: Text(location
+                                                                    .locationName),
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    // Set the selected location filter
+                                                                    selectedLocationId =
+                                                                        location
+                                                                            .locationId;
+                                                                  });
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop(); // Close the modal
+                                                                },
+                                                                selected:
+                                                                    selectedLocationId ==
+                                                                        location
+                                                                            .locationId,
+                                                              );
+                                                            }).toList(),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          if (subLocationProvider
+                                              .getSearchFocused())
+                                            Container(
+                                              height:
+                                                  200, // Adjust height as needed
+                                              child: ListView(
+                                                children: (subLocationProvider
+                                                            .getFilteredSubLocations()!
+                                                            .where((subLoc) {
+                                                              // Get the location name and apply both search query and selected location filter
+                                                              final locationName =
+                                                                  locationProvider
+                                                                      .allLocations
+                                                                      ?.firstWhere(
+                                                                        (loc) =>
+                                                                            loc.locationId ==
+                                                                            subLoc.location_id,
+                                                                      )
+                                                                      ?.locationName;
+
+                                                              final matchesSearchQuery = searchQueryLoc ==
+                                                                      null ||
+                                                                  searchQueryLoc!
+                                                                      .isEmpty ||
+                                                                  (subLoc.sublocationName !=
+                                                                          null &&
+                                                                      subLoc
+                                                                          .sublocationName!
+                                                                          .toLowerCase()
+                                                                          .contains(searchQueryLoc!
+                                                                              .toLowerCase())) ||
+                                                                  (locationName !=
+                                                                          null &&
+                                                                      locationName
+                                                                          .toLowerCase()
+                                                                          .contains(
+                                                                              searchQueryLoc!.toLowerCase()));
+
+                                                              final matchesLocationFilter =
+                                                                  selectedLocationId ==
+                                                                          null ||
+                                                                      subLoc.location_id ==
+                                                                          selectedLocationId;
+
+                                                              return matchesSearchQuery &&
+                                                                  matchesLocationFilter;
+                                                            })
+                                                            .map((subLoc) {
+                                                              if (subLoc.sublocationName !=
+                                                                      null &&
+                                                                  subLoc
+                                                                      .sublocationName!
+                                                                      .isNotEmpty) {
+                                                                return ListTile(
+                                                                  title: Text(subLoc
+                                                                      .sublocationName!),
+                                                                  subtitle:
+                                                                      Text(
+                                                                    locationProvider
+                                                                            .allLocations
+                                                                            ?.firstWhere(
+                                                                              (loc) => loc.locationId == subLoc.location_id,
+                                                                            )
+                                                                            ?.locationName ??
+                                                                        'Location not found',
+                                                                  ),
+                                                                  onTap: () {
+                                                                    subLocationProvider
+                                                                        .setSubLocationType(
+                                                                            subLoc.sublocationId);
+                                                                    SelectedSubLocationType ==
+                                                                        subLoc
+                                                                            .sublocationId;
+                                                                    _searchControllerLoc
+                                                                            .text =
+                                                                        subLoc.sublocationName ??
+                                                                            '';
+                                                                    FocusScope.of(
+                                                                            context)
+                                                                        .unfocus();
+                                                                    subLocationProvider
+                                                                        .setSearchFocus(
+                                                                            false);
+
+                                                                    setState(
+                                                                        () {});
+                                                                  },
+                                                                  selected: subLocationProvider
+                                                                          .selectedSubLocation ==
+                                                                      subLoc
+                                                                          .sublocationId,
+                                                                );
+                                                              }
+                                                              return null;
+                                                            })
+                                                            .where((listTile) =>
+                                                                listTile !=
+                                                                null)
+                                                            .cast<Widget>()
+                                                            .toList())
+                                                        .isEmpty
+                                                    ? [
+                                                        const Center(
+                                                          child: Text(
+                                                            'No Locations Found',
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
+                                                        )
+                                                      ]
+                                                    : subLocationProvider
+                                                        .getFilteredSubLocations()!
+                                                        .where((subLoc) {
+                                                          final locationName =
+                                                              locationProvider
+                                                                  .allLocations
+                                                                  ?.firstWhere(
+                                                                    (loc) =>
+                                                                        loc.locationId ==
+                                                                        subLoc
+                                                                            .location_id,
+                                                                  )
+                                                                  ?.locationName;
+
+                                                          final matchesSearchQuery = searchQueryLoc == null ||
+                                                              searchQueryLoc!
+                                                                  .isEmpty ||
+                                                              (subLoc.sublocationName !=
+                                                                      null &&
+                                                                  subLoc
+                                                                      .sublocationName!
+                                                                      .toLowerCase()
+                                                                      .contains(
+                                                                          searchQueryLoc!
+                                                                              .toLowerCase())) ||
+                                                              (locationName !=
+                                                                      null &&
+                                                                  locationName
+                                                                      .toLowerCase()
+                                                                      .contains(
+                                                                          searchQueryLoc!
+                                                                              .toLowerCase()));
+
+                                                          final matchesLocationFilter =
+                                                              selectedLocationId ==
+                                                                      null ||
+                                                                  subLoc.location_id ==
+                                                                      selectedLocationId;
+
+                                                          return matchesSearchQuery &&
+                                                              matchesLocationFilter;
+                                                        })
+                                                        .map((subLoc) {
+                                                          if (subLoc.sublocationName !=
+                                                                  null &&
+                                                              subLoc
+                                                                  .sublocationName!
+                                                                  .isNotEmpty) {
+                                                            return ListTile(
+                                                              title: Text(subLoc
+                                                                  .sublocationName!),
+                                                              subtitle: Text(
+                                                                locationProvider
+                                                                        .allLocations
+                                                                        ?.firstWhere(
+                                                                          (loc) =>
+                                                                              loc.locationId ==
+                                                                              subLoc.location_id,
+                                                                        )
+                                                                        ?.locationName ??
+                                                                    'Location not found',
+                                                              ),
+                                                              onTap: () {
+                                                                subLocationProvider
+                                                                    .setSubLocationType(
+                                                                        subLoc
+                                                                            .sublocationId);
+                                                                _searchControllerLoc
+                                                                        .text =
+                                                                    subLoc.sublocationName ??
+                                                                        '';
+                                                                SelectedSubLocationType =
+                                                                    subLoc
+                                                                        .sublocationId;
+                                                                FocusScope.of(
+                                                                        context)
+                                                                    .unfocus();
+                                                                subLocationProvider
+                                                                    .setSearchFocus(
+                                                                        false);
+                                                                setState(() {});
+                                                              },
+                                                              selected: subLocationProvider
+                                                                      .selectedSubLocation ==
+                                                                  subLoc
+                                                                      .sublocationId,
+                                                            );
+                                                          }
+                                                          return null;
+                                                        })
+                                                        .where((listTile) =>
+                                                            listTile != null)
+                                                        .cast<Widget>()
+                                                        .toList(),
+                                              ),
+                                            ),
+                                        ],
                                       );
                                     }
                                   },
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                if (isFirstLocationDropdownSelected)
-                                  Consumer<SubLocationProviderClass>(
-                                      builder: (context, selectedValue, child) {
-                                    if (SelectedLocationType != null) {
-                                      if (selectedValue.loading) {
-                                        return const Center(
-                                          child:
-                                              CircularProgressIndicator(), // Display a loading indicator
-                                        );
-                                      } else {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Theme.of(context)
-                                                    .hintColor),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: FormField<String>(
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Sub Location is required';
-                                              }
-                                              return null;
-                                            },
-                                            builder:
-                                                (FormFieldState<String> state) {
-                                              return DropdownButton<String>(
-                                                value: selectedValue
-                                                    .selectedSubLocation,
-                                                style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .secondaryHeaderColor,
-                                                  fontWeight: FontWeight.normal,
-                                                ),
-                                                isExpanded: true,
-                                                icon: Icon(
-                                                    Icons.arrow_drop_down,
-                                                    color: Theme.of(context)
-                                                        .secondaryHeaderColor),
-                                                underline: Container(),
-                                                items: [
-                                                  DropdownMenuItem<String>(
-                                                    value:
-                                                        null, // Placeholder value
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10.0,
-                                                          vertical: 8.0),
-                                                      child: Text(
-                                                        'Sub Location',
-                                                        style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .secondaryHeaderColor,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  if (selectedValue
-                                                          .subLocations !=
-                                                      null)
-                                                    ...selectedValue
-                                                        .subLocations!
-                                                        .map((type) {
-                                                      print(type);
-                                                      return buildSubLocationMenuItem(
-                                                          type);
-                                                    }).toList(),
-                                                ],
-                                                onChanged: (v) {
-                                                  selectedValue
-                                                      .setSubLocationType(v);
-                                                  SelectedSubLocationType = v!;
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      }
-                                    } else {
-                                      return const Text(
-                                          'Please select a location first',
-                                          style: TextStyle(
-                                            color: Colors.red,
-                                          ));
-                                    }
-                                  }),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 12),
                                 ),
                               ],
                             ),
                           ),
                         ),
+                        // SizedBox(
+                        //   height: 20,
+                        // ),
+                        // Card(
+                        //   shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(12.0),
+                        //   ),
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.all(22.0),
+                        //     child: Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         const Padding(
+                        //           padding: EdgeInsets.only(left: 12),
+                        //         ),
+                        //         Padding(
+                        //             padding: const EdgeInsets.symmetric(
+                        //                 vertical: 8.0),
+                        //             child: Row(
+                        //               children: [
+                        //                 Text(
+                        //                   'Where are you located?',
+                        //                   style: TextStyle(
+                        //                     color: Theme.of(context)
+                        //                         .secondaryHeaderColor,
+                        //                     fontWeight: FontWeight.bold,
+                        //                   ),
+                        //                 ),
+                        //                 const Text(
+                        //                   '*',
+                        //                   style: TextStyle(
+                        //                     color: Colors
+                        //                         .red, // Set the asterisk color to red
+                        //                   ),
+                        //                 ),
+                        //               ],
+                        //             )),
+                        //         Consumer<LocationProviderClass>(
+                        //           builder: (context, selectedVal, child) {
+                        //             if (selectedVal.loading) {
+                        //               return const Center(
+                        //                 child:
+                        //                     CircularProgressIndicator(), // Display a loading indicator
+                        //               );
+                        //             } else {
+                        //               return Container(
+                        //                 decoration: BoxDecoration(
+                        //                   border: Border.all(
+                        //                       color: Theme.of(context)
+                        //                           .highlightColor),
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(12),
+                        //                 ),
+                        //                 child: FormField<String>(
+                        //                   validator: (value) {
+                        //                     if (value == null ||
+                        //                         value.isEmpty) {
+                        //                       return 'Location is required';
+                        //                     }
+                        //                     return null;
+                        //                   },
+                        //                   builder:
+                        //                       (FormFieldState<String> state) {
+                        //                     return DropdownButton<String>(
+                        //                       value:
+                        //                           selectedVal.selectedLocation,
+                        //                       style: TextStyle(
+                        //                         color: Theme.of(context)
+                        //                             .secondaryHeaderColor,
+                        //                         fontWeight: FontWeight.normal,
+                        //                       ),
+                        //                       isExpanded: true,
+                        //                       icon: Icon(Icons.arrow_drop_down,
+                        //                           color: Theme.of(context)
+                        //                               .secondaryHeaderColor),
+                        //                       underline: Container(),
+                        //                       items: [
+                        //                         DropdownMenuItem<String>(
+                        //                           value:
+                        //                               null, // Placeholder value
+                        //                           child: Padding(
+                        //                               padding: const EdgeInsets
+                        //                                   .symmetric(
+                        //                                   horizontal: 10.0,
+                        //                                   vertical: 8.0),
+                        //                               child: Row(
+                        //                                 children: [
+                        //                                   Text(
+                        //                                     'Support Location',
+                        //                                     style: TextStyle(
+                        //                                         color: Theme.of(
+                        //                                                 context)
+                        //                                             .secondaryHeaderColor,
+                        //                                         fontWeight:
+                        //                                             FontWeight
+                        //                                                 .normal,
+                        //                                         fontSize: 14),
+                        //                                   ),
+                        //                                   const Text(
+                        //                                     '*',
+                        //                                     style: TextStyle(
+                        //                                       color: Colors
+                        //                                           .red, // Set the asterisk color to red
+                        //                                     ),
+                        //                                   ),
+                        //                                 ],
+                        //                               )),
+                        //                         ),
+                        //                         if (selectedVal.allLocations !=
+                        //                             null)
+                        //                           ...selectedVal.allLocations!
+                        //                               .map((type) {
+                        //                             return buildLocationMenuItem(
+                        //                                 type);
+                        //                           }).toList(),
+                        //                       ],
+                        //                       onChanged: (v) {
+                        //                         selectedVal.setLocation(v);
+                        //                         //    incidentType = v!;
+                        //                         SelectedLocationType = v!;
+                        //                         Provider.of<SubLocationProviderClass>(
+                        //                                 context,
+                        //                                 listen: false)
+                        //                             .selectedSubLocation = null;
+                        //                         Provider.of<SubLocationProviderClass>(
+                        //                                 context,
+                        //                                 listen: false)
+                        //                             .getSubLocationPostData(v);
+                        //                         isFirstLocationDropdownSelected =
+                        //                             v != null;
+                        //                         setState(() {});
+                        //                       },
+                        //                     );
+                        //                   },
+                        //                 ),
+                        //               );
+                        //             }
+                        //           },
+                        //         ),
+                        //         const SizedBox(
+                        //           height: 10,
+                        //         ),
+                        //         if (isFirstLocationDropdownSelected)
+                        //           Consumer<SubLocationProviderClass>(
+                        //               builder: (context, selectedValue, child) {
+                        //             if (SelectedLocationType != null) {
+                        //               if (selectedValue.loading) {
+                        //                 return const Center(
+                        //                   child:
+                        //                       CircularProgressIndicator(), // Display a loading indicator
+                        //                 );
+                        //               } else {
+                        //                 return Container(
+                        //                   decoration: BoxDecoration(
+                        //                     border: Border.all(
+                        //                         color: Theme.of(context)
+                        //                             .hintColor),
+                        //                     borderRadius:
+                        //                         BorderRadius.circular(12),
+                        //                   ),
+                        //                   child: FormField<String>(
+                        //                     validator: (value) {
+                        //                       if (value == null ||
+                        //                           value.isEmpty) {
+                        //                         return 'Sub Location is required';
+                        //                       }
+                        //                       return null;
+                        //                     },
+                        //                     builder:
+                        //                         (FormFieldState<String> state) {
+                        //                       return DropdownButton<String>(
+                        //                         value: selectedValue
+                        //                             .selectedSubLocation,
+                        //                         style: TextStyle(
+                        //                           color: Theme.of(context)
+                        //                               .secondaryHeaderColor,
+                        //                           fontWeight: FontWeight.normal,
+                        //                         ),
+                        //                         isExpanded: true,
+                        //                         icon: Icon(
+                        //                             Icons.arrow_drop_down,
+                        //                             color: Theme.of(context)
+                        //                                 .secondaryHeaderColor),
+                        //                         underline: Container(),
+                        //                         items: [
+                        //                           DropdownMenuItem<String>(
+                        //                             value:
+                        //                                 null, // Placeholder value
+                        //                             child: Padding(
+                        //                               padding: const EdgeInsets
+                        //                                   .symmetric(
+                        //                                   horizontal: 10.0,
+                        //                                   vertical: 8.0),
+                        //                               child: Text(
+                        //                                 'Sub Location',
+                        //                                 style: TextStyle(
+                        //                                     color: Theme.of(
+                        //                                             context)
+                        //                                         .secondaryHeaderColor,
+                        //                                     fontWeight:
+                        //                                         FontWeight
+                        //                                             .normal,
+                        //                                     fontSize: 14),
+                        //                               ),
+                        //                             ),
+                        //                           ),
+                        //                           if (selectedValue
+                        //                                   .subLocations !=
+                        //                               null)
+                        //                             ...selectedValue
+                        //                                 .subLocations!
+                        //                                 .map((type) {
+                        //                               print(type);
+                        //                               return buildSubLocationMenuItem(
+                        //                                   type);
+                        //                             }).toList(),
+                        //                         ],
+                        //                         onChanged: (v) {
+                        //                           selectedValue
+                        //                               .setSubLocationType(v);
+                        //                           SelectedSubLocationType = v!;
+                        //                         },
+                        //                       );
+                        //                     },
+                        //                   ),
+                        //                 );
+                        //               }
+                        //             } else {
+                        //               return const Text(
+                        //                   'Please select a location first',
+                        //                   style: TextStyle(
+                        //                     color: Colors.red,
+                        //                   ));
+                        //             }
+                        //           }),
+                        //         const Padding(
+                        //           padding: EdgeInsets.only(left: 12),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02,
                         ),
@@ -908,6 +1243,7 @@ class _UserFormState extends State<UserForm> {
                         ),
                         OverflowBar(
                           alignment: MainAxisAlignment.end,
+                          spacing: MediaQuery.of(context).size.width * 0.02,
                           children: [
                             TextButton(
                                 onPressed: () {
@@ -930,8 +1266,7 @@ class _UserFormState extends State<UserForm> {
                               onPressed: isSubmitting
                                   ? null
                                   : () async {
-                                      if (isFirstLocationDropdownSelected &&
-                                          isRiskLevelSelected &&
+                                      if (isRiskLevelSelected &&
                                           // (incidentSubType != '') &&
                                           (SelectedSubLocationType != '') &&
                                           (selectedAssetSubType != '')) {

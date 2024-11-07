@@ -26,12 +26,9 @@ class AssetProviderClass extends ChangeNotifier {
       loading = true;
       notifyListeners();
 
-      // Ensure assetTypeList is populated by waiting for `fetchAssetTypesandSubTypes`
       await fetchAssetTypesandSubTypes();
 
-      // Populate allAssets if assetTypeList is successfully fetched
       if (assetTypeList != null) {
-        // Expand the assets and filter out any with null assetName
         allAssets = assetTypeList!
             .expand((type) => type.assets)
             .where((asset) =>
