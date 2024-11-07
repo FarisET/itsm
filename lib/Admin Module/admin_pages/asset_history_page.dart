@@ -56,55 +56,99 @@ class _AssetHistoryPageState extends State<AssetHistoryPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("History for ${widget.assetNo}"),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back,
+                color: Theme.of(context).secondaryHeaderColor),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          title: Text("View History",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Theme.of(context).secondaryHeaderColor,
+              )),
+          backgroundColor: Colors.white,
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                onChanged: (query) {
-                  final provider =
-                      Provider.of<AssetHistoryProvider>(context, listen: false);
-                  filterAssetHistory(query, provider.assetHistory);
-                },
-                decoration: InputDecoration(
-                  labelText: 'Search',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(),
+        body: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.05, vertical: screenHeight * 0.05),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                // Search Bar
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.01,
+                      vertical: screenHeight * 0.01),
+                  child: Expanded(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                      child: TextField(
+                        onChanged: (query) {
+                          final provider = Provider.of<AssetHistoryProvider>(
+                              context,
+                              listen: false);
+                          filterAssetHistory(query, provider.assetHistory);
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Search',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(),
+                          ),
+                          suffixIcon: Icon(Icons.search),
+                        ),
+                      ),
+                    ),
                   ),
-                  suffixIcon: Icon(Icons.search),
                 ),
-              ),
-            ),
-            Expanded(
-              child: Consumer<AssetHistoryProvider>(
-                builder: (context, provider, child) {
-                  if (provider.isLoading) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  if (provider.errorMessage != null) {
-                    return Center(child: Text(provider.errorMessage!));
-                  }
-                  // Check if filteredAssetHistory is empty after filtering
-                  if (filteredAssetHistory.isEmpty) {
-                    return Center(
-                        child: Text("No history available for this asset."));
-                  }
+                Expanded(
+                  child: Consumer<AssetHistoryProvider>(
+                    builder: (context, provider, child) {
+                      if (provider.isLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (provider.errorMessage != null) {
+                        return Center(child: Text(provider.errorMessage!));
+                      }
+                      // Check if filteredAssetHistory is empty after filtering
+                      if (filteredAssetHistory.isEmpty) {
+                        return Center(
+                            child:
+                                Text("No history available for this asset."));
+                      }
 
-                  // Display the filtered asset history
-                  return ListView.builder(
-                    itemCount: filteredAssetHistory.length,
-                    itemBuilder: (context, index) {
-                      return AssetHistoryTile(
-                          assetHistory: filteredAssetHistory[index]);
+                      // Display the filtered asset history
+                      return ListView.builder(
+                        itemCount: filteredAssetHistory.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: screenHeight *
+                                    0.01), // Ensure padding is consistent
+                            child: Container(
+                              width: double
+                                  .infinity, // Make sure the card takes full width
+                              child: AssetHistoryTile(
+                                  assetHistory: filteredAssetHistory[index]),
+                            ),
+                          );
+                        },
+                      );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
