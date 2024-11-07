@@ -130,7 +130,7 @@ class _HomePage2State extends State<HomePage2> {
           children: [
             FloatingActionButton(
               // backgroundColor: const Color(0xff1593f8),
-              backgroundColor: Colors.black,
+              backgroundColor: Theme.of(context).primaryColor,
               //  backgroundColor: Colors.white,
               onPressed: () {
                 LocationRepository().syncDbLocationsAndSublocations();

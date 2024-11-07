@@ -115,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                               onPressed: () {
                                 closeApp();
                               },
-                              child: const Text('CANCEL')),
+                              child: const Text('CLOSE')),
                           SizedBox(
                             height: MediaQuery.sizeOf(context).height * 0.05,
                             // width: MediaQuery.sizeOf(context).height * 0.1,
@@ -126,6 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                                         if (_formKey.currentState!.validate()) {
                                           handleLoginButton(context);
                                         }
+                                        FocusScope.of(context).unfocus();
                                       },
                                 child: isSubmitting
                                     ? Row(

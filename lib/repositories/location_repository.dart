@@ -19,6 +19,19 @@ class LocationRepository {
     return await _databaseHelper.getAllSubLocations();
   }
 
+  Future<void> updateLocation(
+    String locationId,
+    String locationName,
+  ) async {
+    await _locationsDataService.updateLocation(locationId, locationName);
+  }
+
+  Future<void> deleteLocation(
+    String locationId,
+  ) async {
+    await _locationsDataService.deleteLocation(locationId);
+  }
+
   Future<void> syncDbLocationsAndSublocations() async {
     try {
       final json =

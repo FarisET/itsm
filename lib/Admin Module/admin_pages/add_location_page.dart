@@ -172,6 +172,37 @@ class _AddLocationPageState extends State<AddLocationPage> {
                                                 locationProvider.setLocation(
                                                     location.locationName);
                                               },
+                                              trailing: Row(
+                                                mainAxisSize: MainAxisSize
+                                                    .min, // To make sure the Row doesn't take up extra space
+                                                children: [
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                        Icons.edit_outlined,
+                                                        color: Colors.blue),
+                                                    onPressed: () {
+                                                      showEditLocationModal(
+                                                          context,
+                                                          location.locationId,
+                                                          location
+                                                              .locationName);
+                                                    },
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(
+                                                        Icons
+                                                            .delete_outline_outlined,
+                                                        color: Colors
+                                                            .red), // Delete icon
+                                                    onPressed: () {
+                                                      _showDeleteConfirmationDialog(
+                                                          context,
+                                                          location.locationId,
+                                                          locationProvider);
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
                                               selected: locationProvider
                                                       .selectedLocation ==
                                                   location.locationName,
@@ -224,6 +255,168 @@ class _AddLocationPageState extends State<AddLocationPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void showEditLocationModal(
+      BuildContext context, String locationId, String currentName) {
+    final TextEditingController nameController =
+        TextEditingController(text: currentName);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Align(
+          alignment: Alignment.center,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              margin: const EdgeInsets.only(top: 100),
+              padding: const EdgeInsets.all(16),
+              width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    spreadRadius: 5,
+                  )
+                ],
+              ),
+              child: Consumer<LocationProviderClass>(
+                builder: (context, locationProvider, _) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Edit Location',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Current Name: $currentName',
+                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                          labelText: 'New Location Name',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              String newLocationName =
+                                  nameController.text.trim();
+                              if (newLocationName.isNotEmpty) {
+                                try {
+                                  await locationProvider.updateLocation(
+                                      locationId, newLocationName);
+                                  Navigator.of(context).pop();
+                                  _refreshLocations();
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    content: const Text('Location Updated'),
+                                    duration: const Duration(seconds: 3),
+                                  ));
+                                } catch (error) {
+                                  Navigator.of(context).pop();
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    backgroundColor: Colors.redAccent,
+                                    content: Text('Error: $error'),
+                                    duration: const Duration(seconds: 3),
+                                  ));
+                                }
+                                setState(() {}); // Rebuild widget after update
+                              }
+                            },
+                            child: locationProvider.isLoading
+                                ? CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  )
+                                : const Text('Update'),
+                          )
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, String locationId,
+      LocationProviderClass locationProvider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: Text('Confirm Deletion'),
+          content: Text('Are you sure you want to delete this location?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () async {
+                // Call the delete function from the provider
+                try {
+                  await locationProvider.deleteLocation(locationId);
+                  Navigator.of(context).pop(); // Close the dialog
+                  _refreshLocations();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    content: const Text('Location Deleted'),
+                    duration: const Duration(seconds: 3),
+                  ));
+                } catch (error) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: Colors.redAccent,
+                    content: Text('Error: $error'),
+                    duration: const Duration(seconds: 3),
+                  ));
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

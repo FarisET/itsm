@@ -138,6 +138,62 @@ class LocationsDataService {
     }
   }
 
+  Future<void> updateLocation(String locationId, String locationName) async {
+    String? jwtToken = await storage.read(key: 'jwt');
+    final url = Uri.parse('$IP_URL/admin/dashboard/updateLocation');
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json'
+        },
+        body: json.encode({
+          'location_id': locationId,
+          'location_name': locationName,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Handle success
+        return;
+      } else {
+        // Handle error (e.g., throw an error if the response status is not 200)
+        throw Exception('Failed to update location');
+      }
+    } catch (error) {
+      print('Error: $error');
+      rethrow; // Rethrow so that the calling function can catch and handle it
+    }
+  }
+
+  Future<void> deleteLocation(String locationId) async {
+    String? jwtToken = await storage.read(key: 'jwt');
+
+    final url = Uri.parse('$IP_URL/admin/dashboard/deleteLocation/$locationId');
+
+    try {
+      final response = await http.delete(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        // Handle failure
+        throw Exception('Failed to delete location');
+      }
+    } catch (error) {
+      print("Error: $error");
+      rethrow; // Let the provider handle it
+    }
+  }
+
   Future<Map<String, dynamic>> addSublocation(
       String locationId, String sublcoationName) async {
     String? jwtToken = await storage.read(key: 'jwt');
