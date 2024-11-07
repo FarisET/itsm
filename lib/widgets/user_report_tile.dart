@@ -32,7 +32,7 @@ class UserReportTile extends StatelessWidget {
             children: [
               Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: 0.0),
@@ -64,14 +64,14 @@ class UserReportTile extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (userReport.assetName != null)
-                      Row(
-                        children: [
-                          const Icon(Icons.laptop_mac_outlined,
-                              color: Colors.black, size: 20),
-                          Text(' ${userReport.assetName}')
-                        ],
-                      ),
+                    // if (userReport.assetName != null)
+                    //   Row(
+                    //     children: [
+                    //       const Icon(Icons.laptop_mac_outlined,
+                    //           color: Colors.black, size: 20),
+                    //       Text(' ${userReport.assetName}')
+                    //     ],
+                    //   ),
                     Row(
                       children: [
                         const Icon(Icons.location_on_outlined,

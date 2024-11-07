@@ -6,55 +6,59 @@ class UserActionsModalSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).height * .2,
-      child: ListView(shrinkWrap: true, children: [
-        //black divider
-        Container(
-          height: 2,
-          margin: EdgeInsets.symmetric(
-              vertical: MediaQuery.sizeOf(context).height * .015,
-              horizontal: MediaQuery.sizeOf(context).width * .4),
-          decoration: BoxDecoration(
-              color: Colors.grey, borderRadius: BorderRadius.circular(8)),
-        ),
-        IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.close)),
+    final screenHeight = MediaQuery.sizeOf(context).height;
 
-        //report incident
-        _OptionItem(
+    return SizedBox(
+      height: screenHeight * .25,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Centered divider line with fractionally sized box
+          FractionallySizedBox(
+            widthFactor: 0.15, // Adjusts width to 15% of the modal width
+            child: Container(
+              height: 4,
+              margin: EdgeInsets.symmetric(vertical: screenHeight * .015),
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          // Close button aligned to the top right
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.close),
+            ),
+          ),
+
+          // Register Ticket option
+          _OptionItem(
             icon:
                 Icon(Icons.copy_all_rounded, color: Colors.blue[600], size: 26),
             name: 'Register Ticket',
-            description: 'get your issue resolved',
+            description: 'Get your issue resolved',
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const UserForm()),
               );
-            }),
-        Divider(
-          color: Colors.black54,
-          endIndent: MediaQuery.sizeOf(context).width * .04,
-          indent: MediaQuery.sizeOf(context).width * .04,
-        ),
-        // _OptionItem(
-        //     // icon: Icon(Icons.copy_all_rounded, color: Colors.blue[600], size: 26),
-        //     icon: Icon(Icons.search_rounded, color: Colors.blue[600], size: 26),
-        //     name: 'Start Inspection',
-        //     description: 'Capture an incident, hazard',
-        //     onTap: () {}),
+            },
+          ),
 
-        //separator or divider
-        // Divider(
-        //   color: Colors.black54,
-        //   endIndent: MediaQuery.sizeOf(context).width * .04,
-        //   indent: MediaQuery.sizeOf(context).width * .04,
-        // )
-      ]),
+          // Divider with consistent indentation
+          Divider(
+            color: Colors.black54,
+            thickness: 1,
+            indent: 20,
+            endIndent: 20,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -65,45 +69,47 @@ class _OptionItem extends StatelessWidget {
   final String description;
   final VoidCallback onTap;
 
-  const _OptionItem(
-      {required this.icon,
-      required this.name,
-      required this.onTap,
-      required this.description});
+  const _OptionItem({
+    required this.icon,
+    required this.name,
+    required this.onTap,
+    required this.description,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () => onTap(),
-        child: ListTile(
-          leading: Container(
-            decoration: BoxDecoration(
-              color: Colors.blue[100], // Light blue color
-              borderRadius:
-                  BorderRadius.circular(8.0), // Adjust the radius for curvature
-            ),
-            padding: const EdgeInsets.all(8.0), // Adjust padding as needed
-            child: icon, // Your icon widget
+      onTap: () => onTap(),
+      child: ListTile(
+        leading: Container(
+          decoration: BoxDecoration(
+            color: Colors.blue[100],
+            borderRadius: BorderRadius.circular(8.0),
           ),
-          title: Text(
-            "$name",
-            style: TextStyle(
-              fontSize: 18,
-              color: Theme.of(context).secondaryHeaderColor,
-              fontWeight: FontWeight.bold,
-            ),
+          padding: const EdgeInsets.all(8.0),
+          child: icon,
+        ),
+        title: Text(
+          name,
+          style: TextStyle(
+            fontSize: 18,
+            color: Theme.of(context).secondaryHeaderColor,
+            fontWeight: FontWeight.bold,
           ),
-          subtitle: Text(
-            "$description",
-            style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        subtitle: Text(
+          description,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        trailing: CircleAvatar(
+          backgroundColor: Colors.blue[100],
+          radius: 12,
+          child: const Icon(
+            Icons.arrow_forward_ios_outlined,
+            size: 11,
           ),
-          trailing: CircleAvatar(
-              backgroundColor: Colors.blue[100],
-              radius: 12,
-              child: const Icon(
-                Icons.arrow_forward_ios_outlined,
-                size: 11,
-              )),
-        ));
+        ),
+      ),
+    );
   }
 }

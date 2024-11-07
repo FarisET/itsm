@@ -284,17 +284,18 @@ class _HomePage2State extends State<HomePage2> {
 
   void _showBottomSheet() {
     showModalBottomSheet(
-        isDismissible: true,
-        context: context,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        builder: (_) {
-          return SizedBox(
-            height: MediaQuery.sizeOf(context).height * .2,
-            child: const UserActionsModalSheet(),
-          );
-        });
+      isDismissible: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (_) {
+        return const UserActionsModalSheet(); // No need for a SizedBox here
+      },
+    );
   }
 }
 
