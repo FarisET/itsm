@@ -25,15 +25,6 @@ class Alerts {
           ),
           actions: [
             CupertinoDialogAction(
-              child: Text(
-                "ignore",
-                style: TextStyle(color: Theme.of(context).primaryColor),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            CupertinoDialogAction(
               child: const Text(
                 "Close",
               ),

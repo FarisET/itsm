@@ -15,6 +15,8 @@ class AssetProviderClass extends ChangeNotifier {
   String? selectedAssetSubtype;
   String? _error;
   String? get error => _error;
+  bool searchInitialized = false;
+  bool isSearchFocused = false;
 
   String? jwtToken;
   final storage = const FlutterSecureStorage();
@@ -24,14 +26,17 @@ class AssetProviderClass extends ChangeNotifier {
       loading = true;
       notifyListeners();
 
-      // Check and fetch assetTypeList if null
-      if (assetTypeList == null) {
-        await fetchAssetTypesandSubTypes();
-      }
+      // Ensure assetTypeList is populated by waiting for `fetchAssetTypesandSubTypes`
+      await fetchAssetTypesandSubTypes();
 
       // Populate allAssets if assetTypeList is successfully fetched
       if (assetTypeList != null) {
-        allAssets = assetTypeList!.expand((type) => type.assets).toList();
+        // Expand the assets and filter out any with null assetName
+        allAssets = assetTypeList!
+            .expand((type) => type.assets)
+            .where((asset) =>
+                asset.assetName != null && asset.assetName!.isNotEmpty)
+            .toList();
       } else {
         _error = 'Asset types data is unavailable.';
       }
@@ -83,6 +88,16 @@ class AssetProviderClass extends ChangeNotifier {
     }
   }
 
+  void setSearchFocus(bool isFocused) {
+    isSearchFocused = isFocused;
+    notifyListeners();
+  }
+
+  bool getSearchFocused() {
+    notifyListeners();
+    return isSearchFocused;
+  }
+
   // Set the selected asset type and reset the selected asset subtype
   void setSelectedAssetType(String? assetTypeId) {
     selectedAssetType = assetTypeId;
@@ -96,17 +111,25 @@ class AssetProviderClass extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Method to filter assets (subtypes) based on the selected asset type
-  List<Asset> getFilteredAssets(String? selectedAssetTypeId) {
-    if (selectedAssetTypeId == null || assetTypeList == null) return [];
+  List<Asset> getFilteredAssets() {
+    // Show all assets if no asset type is selected or if the search bar is focused
+    if (selectedAssetType == null && isSearchFocused) {
+      return allAssets;
+    }
 
-    // Find the asset type that matches the selected asset type ID
-    AssetType? selectedType = assetTypeList!.firstWhere(
-      (type) => type.assetTypeId.toString() == selectedAssetTypeId,
+    // Otherwise, filter assets based on the selected asset type
+    AssetType? selectedType = assetTypeList?.firstWhere(
+      (type) => type.assetTypeId.toString() == selectedAssetType,
       orElse: () => AssetType(assetTypeId: 0, assetTypeDesc: '', assets: []),
     );
 
-    // Return the list of assets (subtypes) for the selected asset type
-    return selectedType.assets ?? [];
+    return selectedType?.assets ?? [];
+  }
+
+  void initializeSearch() {
+    if (!searchInitialized) {
+      searchInitialized = true;
+      notifyListeners();
+    }
   }
 }

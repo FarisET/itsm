@@ -22,7 +22,6 @@ import '../../models/incident_sub_type.dart';
 import '../../models/incident_types.dart';
 import '../../widgets/build_dropdown_menu_util.dart';
 import '../../widgets/form_date_picker.dart';
-import '../providers/incident_subtype_provider.dart';
 
 import '../providers/incident_type_provider.dart';
 import '../providers/location_provider.dart';
@@ -46,6 +45,8 @@ class _UserFormState extends State<UserForm> {
   String incidentSubType = '';
   List<String> dropdownMenuEntries = [];
   final TextEditingController _textFieldController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+
   bool _confirmedExit = false;
   bool isFirstLocationDropdownSelected = false;
   XFile? _imageFile;
@@ -53,8 +54,9 @@ class _UserFormState extends State<UserForm> {
   bool _isEditing = false;
   ImageStream? _imageStream;
   bool isSubmitting = false;
-  String? selectedAssetType;
-  String? selectedAssetSubType;
+  String? selectedAssetType = '';
+  String? selectedAssetSubType = '';
+  String? searchQuery = '';
 
   void _processData() {
     if (mounted) {
@@ -144,8 +146,7 @@ class _UserFormState extends State<UserForm> {
             .getSubLocationPostData(SelectedLocationType!);
       }
 
-      Provider.of<AssetProviderClass>(context, listen: false)
-          .fetchAssetTypesandSubTypes();
+      Provider.of<AssetProviderClass>(context, listen: false).loadAllAssets();
     });
   }
 
@@ -278,27 +279,25 @@ class _UserFormState extends State<UserForm> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          'Associate Asset',
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .secondaryHeaderColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Associate Asset',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .secondaryHeaderColor,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        const Text(
-                                          '*',
-                                          style: TextStyle(
-                                            color: Colors
-                                                .red, // Set the asterisk color to red
-                                          ),
-                                        ),
-                                      ],
-                                    )),
+                                      ),
+                                      const Text(
+                                        '*',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 Consumer<AssetProviderClass>(
                                   builder: (context, assetProvider, child) {
                                     if (assetProvider.loading) {
@@ -308,119 +307,133 @@ class _UserFormState extends State<UserForm> {
                                     } else {
                                       return Column(
                                         children: [
-                                          // Dropdown for Asset Types
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: Theme.of(context)
-                                                    .highlightColor,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: DropdownButton<String>(
-                                              value: assetProvider
-                                                  .selectedAssetType,
-                                              isExpanded: true,
-                                              icon: Icon(Icons.arrow_drop_down,
-                                                  color: Theme.of(context)
-                                                      .secondaryHeaderColor),
-                                              underline: Container(),
-                                              items: [
-                                                DropdownMenuItem<String>(
-                                                  value: null,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 10.0,
-                                                        vertical: 8.0),
-                                                    child: Text(
-                                                      'Select Asset Type',
-                                                      style: TextStyle(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .secondaryHeaderColor,
-                                                          fontSize: 14),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextFormField(
+                                                  controller: _searchController,
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Search Asset',
+                                                    prefixIcon:
+                                                        Icon(Icons.search),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
                                                     ),
                                                   ),
+                                                  onChanged: (query) {
+                                                    setState(() {
+                                                      searchQuery = query;
+                                                    });
+                                                  },
+                                                  onTap: () {
+                                                    assetProvider
+                                                        .setSearchFocus(true);
+                                                  },
+                                                  onEditingComplete: () {
+                                                    assetProvider
+                                                        .setSearchFocus(false);
+                                                  },
                                                 ),
-                                                if (assetProvider
-                                                        .assetTypeList !=
-                                                    null)
-                                                  ...assetProvider
-                                                      .assetTypeList!
-                                                      .map((type) {
-                                                    return buildAssetMenuItem(
-                                                        type);
-                                                  }).toList(),
-                                              ],
-                                              onChanged: (value) {
-                                                assetProvider
-                                                    .setSelectedAssetType(
-                                                        value);
-                                                selectedAssetType = value;
-                                                assetProvider
-                                                    .setSelectedAssetSubtype(
-                                                        null); // Reset Sub Type
-                                                setState(() {});
-                                              },
-                                            ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.filter_list,
+                                                  color: Theme.of(context)
+                                                      .secondaryHeaderColor,
+                                                ),
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        SimpleDialog(
+                                                      title: Text(
+                                                          'Select Asset Type'),
+                                                      children: assetProvider
+                                                                  .assetTypeList !=
+                                                              null
+                                                          ? assetProvider
+                                                              .assetTypeList!
+                                                              .map((type) =>
+                                                                  SimpleDialogOption(
+                                                                    onPressed:
+                                                                        () {
+                                                                      assetProvider.setSelectedAssetType(type
+                                                                          .assetTypeId
+                                                                          .toString());
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child: Text(
+                                                                        type.assetTypeDesc),
+                                                                  ))
+                                                              .toList()
+                                                          : [
+                                                              Text(
+                                                                  'No asset types available')
+                                                            ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ],
                                           ),
                                           const SizedBox(height: 10),
-                                          // Dropdown for Asset Sub Types (Filtered Assets)
-                                          if (selectedAssetType != null)
+                                          // if (!assetProvider.getSearchFocused())
+                                          //   Image.asset(
+                                          //     'assets/images/check-list.png',
+                                          //     width: MediaQuery.of(context)
+                                          //             .size
+                                          //             .width *
+                                          //         0.2,
+                                          //     height: MediaQuery.of(context)
+                                          //             .size
+                                          //             .width *
+                                          //         0.2,
+                                          //   ),
+                                          // const SizedBox(height: 10),
+                                          if (assetProvider.getSearchFocused())
                                             Container(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Theme.of(context)
-                                                      .highlightColor,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: DropdownButton<String>(
-                                                value: assetProvider
-                                                    .selectedAssetSubtype,
-                                                isExpanded: true,
-                                                icon: Icon(
-                                                    Icons.arrow_drop_down,
-                                                    color: Theme.of(context)
-                                                        .secondaryHeaderColor),
-                                                underline: Container(),
-                                                items: [
-                                                  DropdownMenuItem<String>(
-                                                    value: null,
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10.0,
-                                                          vertical: 8.0),
-                                                      child: Text(
-                                                        'Select Asset',
-                                                        style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .secondaryHeaderColor,
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  if (selectedAssetType != null)
-                                                    ...assetProvider
-                                                        .getFilteredAssets(
-                                                            selectedAssetType)
-                                                        .map((asset) {
-                                                      return buildSubAssetMenuItem(
-                                                          asset);
-                                                    }).toList(),
-                                                ],
-                                                onChanged: (value) {
-                                                  assetProvider
-                                                      .setSelectedAssetSubtype(
-                                                          value);
-                                                  selectedAssetSubType = value;
-                                                  setState(() {});
-                                                },
+                                              height:
+                                                  200, // Adjust height as needed
+                                              child: ListView(
+                                                children: assetProvider
+                                                    .getFilteredAssets()
+                                                    .where((asset) =>
+                                                        searchQuery == null ||
+                                                        searchQuery!.isEmpty ||
+                                                        (asset.assetName !=
+                                                                null && // Check for non-null value
+                                                            asset.assetName!
+                                                                .isNotEmpty && // Check for non-empty string
+                                                            asset.assetName!
+                                                                .toLowerCase()
+                                                                .contains(
+                                                                    searchQuery!
+                                                                        .toLowerCase())))
+                                                    .map((asset) => ListTile(
+                                                          title: Text(
+                                                              asset.assetName!),
+                                                          onTap: () {
+                                                            assetProvider
+                                                                .setSelectedAssetSubtype(
+                                                                    asset
+                                                                        .assetNo);
+                                                            _searchController
+                                                                .text = asset
+                                                                    .assetName ??
+                                                                '';
+                                                            assetProvider
+                                                                .setSearchFocus(
+                                                                    false);
+                                                            setState(() {});
+                                                          },
+                                                          selected: assetProvider
+                                                                  .selectedAssetSubtype ==
+                                                              asset.assetNo,
+                                                        ))
+                                                    .toList(),
                                               ),
                                             ),
                                         ],

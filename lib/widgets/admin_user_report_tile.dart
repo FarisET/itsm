@@ -45,7 +45,7 @@ class AdminUserReportTile extends StatelessWidget {
                           Flexible(
                             flex: 70,
                             child: Text(
-                              userReport.incidentSubtypeDescription!,
+                              userReport.assetName ?? 'N/A',
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
