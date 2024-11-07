@@ -285,7 +285,7 @@ class _UserFormState extends State<UserForm> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        'Associate Asset',
+                                        'Select asset requiring attention',
                                         style: TextStyle(
                                           color: Theme.of(context)
                                               .secondaryHeaderColor,
@@ -456,7 +456,7 @@ class _UserFormState extends State<UserForm> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        'Location',
+                                        'Where are you located?',
                                         style: TextStyle(
                                           color: Theme.of(context)
                                               .secondaryHeaderColor,
@@ -490,7 +490,7 @@ class _UserFormState extends State<UserForm> {
                                                       _searchControllerLoc,
                                                   decoration: InputDecoration(
                                                     labelText:
-                                                        'Search Location',
+                                                        'Search department',
                                                     prefixIcon:
                                                         Icon(Icons.search),
                                                     border: OutlineInputBorder(

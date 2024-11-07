@@ -54,29 +54,77 @@ class AppDrawer extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
-                ListTile(
-                  horizontalTitleGap: 0,
-                  leading: Icon(Icons.person_add_outlined,
-                      color: Theme.of(context).secondaryHeaderColor),
-                  title: Text(
-                    'Add User',
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: mainHeaderSize,
-                      color: Theme.of(context).secondaryHeaderColor,
+                ExpansionTile(
+                    // horizontalTitleGap: 0,
+                    leading: Icon(Icons.person_outline_outlined,
+                        color: Theme.of(context).secondaryHeaderColor),
+                    title: Text(
+                      'Manage Users',
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: mainHeaderSize,
+                        color: Theme.of(context).secondaryHeaderColor,
+                      ),
                     ),
-                  ),
-                  onTap: () {
-                    // Navigate to Add User page
-                    Navigator.pushNamed(context, '/create_user_form');
-                  },
-                ),
+                    children: [
+                      ListTile(
+                        title: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Add User',
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: mainHeaderSize,
+                                color: Theme.of(context).secondaryHeaderColor,
+                              ),
+                            ),
+                            Icon(Icons.arrow_forward_ios_outlined,
+                                color: Theme.of(context).secondaryHeaderColor,
+                                size:
+                                    MediaQuery.of(context).size.width * 0.035),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/create_user_form');
+                        },
+                      ),
+                      ListTile(
+                        title: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'View Users',
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: mainHeaderSize,
+                                color: Theme.of(context).secondaryHeaderColor,
+                              ),
+                            ),
+                            Icon(Icons.arrow_forward_ios_outlined,
+                                color: Theme.of(context).secondaryHeaderColor,
+                                size:
+                                    MediaQuery.of(context).size.width * 0.035),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => AddLocationPage()));
+                          // Navigate to Add Country page
+                          //  Navigator.pushNamed(context, '/addCountry');
+                        },
+                      ),
+                    ]),
                 ExpansionTile(
                   // horizontalTitleGap: 0,
                   leading: Icon(Icons.location_on_outlined,
                       color: Theme.of(context).secondaryHeaderColor),
                   title: Text(
-                    'Add Location',
+                    'Manage Locations',
                     style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: mainHeaderSize,
@@ -98,8 +146,9 @@ class AppDrawer extends StatelessWidget {
                               color: Theme.of(context).secondaryHeaderColor,
                             ),
                           ),
-                          Icon(Icons.add,
-                              color: Theme.of(context).secondaryHeaderColor),
+                          Icon(Icons.arrow_forward_ios_outlined,
+                              color: Theme.of(context).secondaryHeaderColor,
+                              size: MediaQuery.of(context).size.width * 0.035),
                         ],
                       ),
                       onTap: () {
@@ -123,8 +172,9 @@ class AppDrawer extends StatelessWidget {
                               color: Theme.of(context).secondaryHeaderColor,
                             ),
                           ),
-                          Icon(Icons.add,
-                              color: Theme.of(context).secondaryHeaderColor),
+                          Icon(Icons.arrow_forward_ios_outlined,
+                              color: Theme.of(context).secondaryHeaderColor,
+                              size: MediaQuery.of(context).size.width * 0.035),
                         ],
                       ),
                       onTap: () {
@@ -144,7 +194,7 @@ class AppDrawer extends StatelessWidget {
                   leading: Icon(Icons.type_specimen_outlined,
                       color: Theme.of(context).secondaryHeaderColor),
                   title: Text(
-                    'Add Asset',
+                    'Manage Assets',
                     style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: mainHeaderSize,
@@ -166,8 +216,9 @@ class AppDrawer extends StatelessWidget {
                             ),
                           ),
                           Spacer(),
-                          Icon(Icons.add,
-                              color: Theme.of(context).secondaryHeaderColor),
+                          Icon(Icons.arrow_forward_ios_outlined,
+                              color: Theme.of(context).secondaryHeaderColor,
+                              size: MediaQuery.of(context).size.width * 0.035),
                         ],
                       ),
                       onTap: () {
@@ -187,8 +238,9 @@ class AppDrawer extends StatelessWidget {
                             ),
                           ),
                           Spacer(),
-                          Icon(Icons.add,
-                              color: Theme.of(context).secondaryHeaderColor),
+                          Icon(Icons.arrow_forward_ios_outlined,
+                              color: Theme.of(context).secondaryHeaderColor,
+                              size: MediaQuery.of(context).size.width * 0.035),
                         ],
                       ),
                       onTap: () {
