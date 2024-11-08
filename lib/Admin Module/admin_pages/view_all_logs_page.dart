@@ -40,7 +40,7 @@ class _LogPageState extends State<LogPage> {
               color: Theme.of(context).secondaryHeaderColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text("View History",
+        title: Text("Asset Logs",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,

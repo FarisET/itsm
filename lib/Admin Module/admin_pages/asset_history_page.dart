@@ -63,7 +63,7 @@ class _AssetHistoryPageState extends State<AssetHistoryPage> {
               Navigator.of(context).pop();
             },
           ),
-          title: Text("View History",
+          title: Text("Asset History",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,

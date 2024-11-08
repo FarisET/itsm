@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:safify/Admin%20Module/admin_pages/asset_history_page.dart';
 import 'package:safify/Admin%20Module/providers/admin_asset_provider.dart';
@@ -115,26 +116,89 @@ class _ViewAssetState extends State<ViewAsset> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
-                                title: Text(asset.assetName!),
-                                subtitle: Text(
-                                    'Past Tickets: ${asset.assetIssueCount ?? 0}'),
-                                trailing: TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AssetHistoryPage(
-                                          assetNo: asset.assetNo!,
+                                padding: const EdgeInsets.all(8.0),
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 16.0),
+                                  title: Row(
+                                    children: [
+                                      const Icon(Icons.label_important_outline,
+                                          color: Colors.blueAccent),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          asset.assetName!,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
                                         ),
                                       ),
-                                    );
-                                  },
-                                  child: Text('View History'),
-                                ),
-                              ),
-                            ),
+                                    ],
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.history,
+                                              color: Colors.orange),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Past Tickets: ${asset.assetIssueCount ?? 0}',
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black54),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.02),
+                                      const Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 8.0),
+                                        child: Divider(thickness: 1),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AssetHistoryPage(
+                                                assetNo: asset.assetNo!,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              'View History',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.blueAccent,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 6),
+                                            const Icon(
+                                              Icons.arrow_forward_ios_rounded,
+                                              size: 18,
+                                              color: Colors.blueAccent,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )),
                           ),
                         );
                       },

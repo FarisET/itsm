@@ -173,10 +173,10 @@ class _SearchSolutionForumState extends State<SearchSolutionForum> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
+                      const Padding(
                         padding: const EdgeInsets.only(left: 10),
                         child: Text(
-                          "Find a quick solution: $actionTeam",
+                          "Find a quick solution",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -189,7 +189,7 @@ class _SearchSolutionForumState extends State<SearchSolutionForum> {
                         controller: searchController,
                         onChanged: (value) => filterActionTeams(value),
                         decoration: InputDecoration(
-                          hintText: 'Search solutions...',
+                          hintText: 'Search problem...',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
