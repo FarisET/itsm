@@ -214,17 +214,93 @@ class _SearchSolutionForumState extends State<SearchSolutionForum> {
                                   ? filteredSolutionForums[index]
                                   : solutionForums[index];
                               return Card(
-                                child: ListTile(
-                                  title: Text(forum.problem),
-                                  subtitle: Text(forum.solution ?? ''),
-                                  trailing: TextButton(
-                                    child: Text('View Steps'),
-                                    onPressed: () => showStepsModal(forum),
-                                  ),
-                                  onTap: () => showStepsModal(
-                                      forum), // Show modal on tap
-                                ),
-                              );
+                                  child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        // horizontal:
+                                        //     MediaQuery.of(context).size.width * 0.0,
+                                        vertical:
+                                            MediaQuery.of(context).size.height *
+                                                0.02,
+                                      ),
+                                      child: ListTile(
+                                        title: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // Problem Section
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Icon(Icons.error_outline,
+                                                    color: Colors.redAccent),
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.02),
+                                                Expanded(
+                                                  child: Text(
+                                                    forum.problem,
+                                                    maxLines: 3,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        color: Colors.black87),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+
+                                            // Divider between Problem and Solution
+                                            const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8.0),
+                                              child: Divider(thickness: 1),
+                                            ),
+
+                                            // Solution Section
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Icon(
+                                                    Icons.lightbulb_outline,
+                                                    color: Colors.green),
+                                                const SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Text(
+                                                    forum.solution ??
+                                                        'No solution available',
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        color: Colors.black54),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+
+                                            // "View Steps" Button
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(0.0),
+                                              child: TextButton(
+                                                child: const Text(
+                                                  'View resolution steps',
+                                                  style: TextStyle(
+                                                      color: Colors.blueAccent),
+                                                ),
+                                                onPressed: () =>
+                                                    showStepsModal(forum),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () => showStepsModal(forum),
+                                      )));
                             },
                           ),
                         ),
