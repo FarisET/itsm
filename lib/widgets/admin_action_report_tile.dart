@@ -25,141 +25,149 @@ class AdminActionReportTile extends StatelessWidget {
     final fetchAllRepsProvider =
         Provider.of<ActionReportsProvider>(context, listen: false);
     return Card(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      elevation: 4,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Ensure column size is constrained
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Incident Type and Date
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    actionReport.incident_subtype_description ?? 'N/A',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 0.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            actionReport.incident_subtype_description!,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                    const Icon(Icons.timer_outlined,
+                        color: Colors.blue, size: 18),
+                    const SizedBox(width: 6),
+                    Text(
+                      actionReport.date_time != null
+                          ? '${actionReport.date_time!.split('T')[0]} | ${actionReport.date_time!.split('T')[1].replaceAll(RegExp(r'\.\d+Z$'), '')}'
+                          : 'No Date',
+                      style: const TextStyle(color: Colors.black54),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10, bottom: 10),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 3),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all()),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.person_outline,
-                              color: Colors.black, size: 20),
-                          Flexible(
-                            child: Text(
-                              ' ${actionReport.reported_by}',
-                              style: const TextStyle(),
-                            ),
-                          )
-                        ],
-                      ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            const Divider(thickness: 1, height: 1),
+
+            // Reported By Section
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.person_outline,
+                      color: Colors.orange, size: 22),
+                  const SizedBox(width: 8),
+                  Text(
+                    actionReport.reported_by ?? 'Unknown Reporter',
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(thickness: 1, height: 1),
+
+            // Report Description
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.textsms_outlined,
+                      color: Colors.purple, size: 22),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      actionReport.report_description!.isNotEmpty
+                          ? actionReport.report_description!
+                          : 'No description provided',
+                      style:
+                          const TextStyle(fontSize: 14, color: Colors.black87),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.timer_outlined,
-                            color: Colors.black, size: 20),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Text(
-                              '${actionReport.date_time?.split('T')[0]} | ${actionReport.date_time?.split('T')[1].replaceAll(RegExp(r'\.\d+Z$'), '')}'),
-                        )
-                      ],
+                  ),
+                ],
+              ),
+            ),
+            const Divider(thickness: 1, height: 1),
+
+            // Resolution Description
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.lightbulb_outline_rounded,
+                      color: Colors.green, size: 22),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      actionReport.resolution_description?.isNotEmpty ?? false
+                          ? actionReport.resolution_description!
+                          : 'No resolution provided',
+                      style:
+                          const TextStyle(fontSize: 14, color: Colors.black87),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.textsms_outlined,
-                            color: Colors.black, size: 20),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Text(
-                              //    item.report_description!.isNotEmpty ?
-                              actionReport.report_description!.isNotEmpty
-                                  ? actionReport.report_description!
-                                  : '-',
-                              style: const TextStyle(),
-                            ),
-                          ),
-                        )
-                      ],
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Action Buttons (Image, Approve, Reject)
+            SizedBox(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ImageButton(
+                    height: double.infinity,
+                    onTap: () {
+                      handleImageButton(actionReport.proof_image, context);
+                    },
+                  ),
+                  ApproveButton(
+                    height: double.infinity,
+                    isApproved:
+                        actionReport.status?.contains('approved') ?? false,
+                    onTap: () async {
+                      await showApproveConfirmDialog(context);
+                    },
+                  ),
+                  Visibility(
+                    visible: actionReport.status != 'approved',
+                    child: RejectButton(
+                      onTap: () {
+                        showRejectConfirmDialogue(context);
+                      },
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.note_alt_outlined,
-                            color: Colors.black, size: 20),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Text(
-                              '${actionReport.resolution_description}',
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).height * 0.04,
-                    ),
-                    SizedBox(
-                      height: 40,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ImageButton(
-                              height: double.infinity,
-                              onTap: () {
-                                handleImageButton(
-                                    actionReport.proof_image, context);
-                              }),
-                          ApproveButton(
-                              height: double.infinity,
-                              isApproved:
-                                  actionReport.status!.contains('approved'),
-                              onTap: () async {
-                                await showApproveConfirmDialog(context);
-                              }),
-                          Visibility(
-                              visible: actionReport.status != 'approved',
-                              child: RejectButton(
-                                onTap: () {
-                                  showRejectConfirmDialogue(context);
-                                },
-                              ))
-                        ],
-                      ),
-                    ),
-                  ]),
-            ],
-          ),
-        ));
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> showApproveConfirmDialog(BuildContext context) {
