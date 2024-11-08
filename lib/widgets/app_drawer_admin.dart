@@ -191,7 +191,7 @@ class AppDrawer extends StatelessWidget {
                 ),
                 ExpansionTile(
                   // horizontalTitleGap: 0,
-                  leading: Icon(Icons.type_specimen_outlined,
+                  leading: Icon(Icons.label_important_outline,
                       color: Theme.of(context).secondaryHeaderColor),
                   title: Text(
                     'Manage Assets',
