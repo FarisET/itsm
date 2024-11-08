@@ -165,7 +165,7 @@ class AppDrawer extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Add Department',
+                            'Add Sub Location',
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: mainHeaderSize,

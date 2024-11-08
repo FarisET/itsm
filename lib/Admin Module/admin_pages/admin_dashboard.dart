@@ -211,7 +211,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(icon, color: Colors.blueAccent, size: 30),
+                Icon(icon, color: Theme.of(context).primaryColor, size: 30),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
