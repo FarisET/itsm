@@ -21,6 +21,14 @@ class SubLocationProviderClass extends ChangeNotifier {
   final LocationRepository _locationRepository = LocationRepository();
   final LocationProviderClass locationProvider = LocationProviderClass();
   final storage = const FlutterSecureStorage();
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   /// Fetch sublocations based on location ID, clearing `subLocations` before each fetch
   Future<void> getSubLocationPostData(String locationId) async {
@@ -110,5 +118,41 @@ class SubLocationProviderClass extends ChangeNotifier {
     }
 
     return location?.locationName;
+  }
+
+  Future<void> updateSubLocation(
+      String SublocationId, String locationId, String SublocationName) async {
+    setLoading(true);
+    notifyListeners(); // Notify UI to show loading
+
+    try {
+      await _locationRepository.updateSubLocation(
+          SublocationId, locationId, SublocationName);
+    } catch (error) {
+      // Handle error (could update a specific error state)
+      print("Error updating location: $error");
+      rethrow; // Rethrow to allow the UI to handle the error if needed
+    } finally {
+      setLoading(false); // Make sure to stop loading
+      notifyListeners(); // Notify UI that loading has finished
+    }
+  }
+
+  Future<void> deleteSubLocation(String locationId) async {
+    setLoading(true);
+    notifyListeners();
+
+    try {
+      await _locationRepository.deleteSubLocation(locationId);
+      // Optionally: you can handle a successful deletion here
+      print("Location deleted successfully.");
+    } catch (error) {
+      // Handle error if needed (e.g., show error message)
+      print("Error deleting location: $error");
+      throw error; // Re-throw the error for the UI to handle
+    } finally {
+      setLoading(false);
+      notifyListeners();
+    }
   }
 }

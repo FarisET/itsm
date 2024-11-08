@@ -100,7 +100,7 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
             },
           ),
           title: Text(
-            "Add Department",
+            "Sub Location",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -112,7 +112,7 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.8,
               child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
@@ -235,27 +235,57 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                             Padding(
                               padding: EdgeInsets.only(left: 8.0),
                               child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Icon(
-                                    _selectedLocationId == null
-                                        ? Icons.info_outline
-                                        : Icons.info,
-                                    color: _selectedLocationName == null
-                                        ? Colors.grey
-                                        : Colors.black,
-                                    size: 20.0,
-                                  ),
-                                  const SizedBox(width: 10.0),
-                                  Text("New Department Name",
-                                      style: TextStyle(
-                                        fontWeight: _selectedLocationId == null
-                                            ? FontWeight.normal
-                                            : FontWeight.bold,
-                                        color: _selectedLocationId == null
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        _selectedLocationId == null
+                                            ? Icons.info_outline
+                                            : Icons.info,
+                                        color: _selectedLocationName == null
                                             ? Colors.grey
-                                            : Theme.of(context)
-                                                .secondaryHeaderColor,
-                                      )),
+                                            : Colors.black,
+                                        size: 20.0,
+                                      ),
+                                      const SizedBox(width: 10.0),
+                                      Text("Sub Location Name",
+                                          style: TextStyle(
+                                            fontWeight:
+                                                _selectedLocationId == null
+                                                    ? FontWeight.normal
+                                                    : FontWeight.bold,
+                                            color: _selectedLocationId == null
+                                                ? Colors.grey
+                                                : Theme.of(context)
+                                                    .secondaryHeaderColor,
+                                          )),
+                                    ],
+                                  ),
+                                  TextButton(
+                                      onPressed: () {
+                                        final sublocationName =
+                                            _sublocationController.text;
+                                        if (_selectedLocationName != null &&
+                                            sublocationName.isNotEmpty) {
+                                          _showConfirmationDialog(
+                                              _selectedLocationId!,
+                                              sublocationName,
+                                              _selectedLocationName!);
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              duration: Duration(seconds: 3),
+                                              content: Text(
+                                                  'Please enter a name first'),
+                                              backgroundColor: Colors.redAccent,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: Text('Add +'))
                                 ],
                               ),
                             ),
@@ -273,7 +303,7 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                                 alignLabelWithHint: true,
                                 hintText: _selectedLocationId == null
                                     ? 'Select a location first'
-                                    : 'Enter department name',
+                                    : 'Enter sub location name',
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.never,
                                 enabledBorder: OutlineInputBorder(
@@ -292,33 +322,35 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                             if (isLocationDropdownSelected)
                               Expanded(
                                 child: Consumer<SubLocationProviderClass>(
-                                  builder: (context, locationProvider, child) {
-                                    if (locationProvider.subLocations == null) {
+                                  builder:
+                                      (context, SublocationProvider, child) {
+                                    if (SublocationProvider.subLocations ==
+                                        null) {
                                       return const Center(
                                         child: CircularProgressIndicator(),
                                       );
                                     }
-                                    if (locationProvider
+                                    if (SublocationProvider
                                         .allSubLocations!.isEmpty) {
                                       return const Center(
                                         child:
-                                            Text('No departments available.'),
+                                            Text('No sub locations available.'),
                                       );
                                     }
 
-                                    final filteredLocations = locationProvider
-                                        .subLocations!
-                                        .where((location) => location
-                                            .sublocationName
-                                            .toLowerCase()
-                                            .contains(
-                                                _searchQuery.toLowerCase()))
-                                        .toList();
+                                    final filteredLocations =
+                                        SublocationProvider.subLocations!
+                                            .where((location) => location
+                                                .sublocationName
+                                                .toLowerCase()
+                                                .contains(
+                                                    _searchQuery.toLowerCase()))
+                                            .toList();
 
                                     return filteredLocations.isEmpty
                                         ? const Center(
                                             child: Text(
-                                                'No matching departments.'),
+                                                'No matching sub locations.'),
                                           )
                                         : Scrollbar(
                                             thumbVisibility: true,
@@ -332,12 +364,47 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                                                   title: Text(
                                                       location.sublocationName),
                                                   onTap: () {
-                                                    locationProvider
+                                                    SublocationProvider
                                                         .setSubLocationType(
                                                             location
                                                                 .sublocationName);
                                                   },
-                                                  selected: locationProvider
+                                                  trailing: Row(
+                                                    mainAxisSize: MainAxisSize
+                                                        .min, // To make sure the Row doesn't take up extra space
+                                                    children: [
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                            Icons.edit_outlined,
+                                                            color: Colors.blue),
+                                                        onPressed: () {
+                                                          showEditSubLocationModal(
+                                                              context,
+                                                              location
+                                                                  .sublocationId,
+                                                              location
+                                                                  .location_id,
+                                                              location
+                                                                  .sublocationName);
+                                                        },
+                                                      ),
+                                                      IconButton(
+                                                        icon: Icon(
+                                                            Icons
+                                                                .delete_outline_outlined,
+                                                            color: Colors
+                                                                .red), // Delete icon
+                                                        onPressed: () {
+                                                          _showDeleteConfirmationDialog(
+                                                              context,
+                                                              location
+                                                                  .sublocationId,
+                                                              SublocationProvider);
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  selected: SublocationProvider
                                                           .selectedSubLocation ==
                                                       location.sublocationName,
                                                 );
@@ -350,33 +417,33 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          onPressed: () {
-                            final sublocationName = _sublocationController.text;
-                            if (_selectedLocationName != null &&
-                                sublocationName.isNotEmpty) {
-                              _showConfirmationDialog(_selectedLocationId!,
-                                  sublocationName, _selectedLocationName!);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    duration: Duration(seconds: 1),
-                                    content: Text(
-                                        'Please select a location and enter a department name')),
-                              );
-                            }
-                          },
-                          child: const Text('Add Department'),
-                        ),
-                      ),
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   height: 50,
+                      //   child: ElevatedButton(
+                      //     style: ElevatedButton.styleFrom(
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(10.0),
+                      //       ),
+                      //     ),
+                      //     onPressed: () {
+                      //       final sublocationName = _sublocationController.text;
+                      //       if (_selectedLocationName != null &&
+                      //           sublocationName.isNotEmpty) {
+                      //         _showConfirmationDialog(_selectedLocationId!,
+                      //             sublocationName, _selectedLocationName!);
+                      //       } else {
+                      //         ScaffoldMessenger.of(context).showSnackBar(
+                      //           const SnackBar(
+                      //               duration: Duration(seconds: 1),
+                      //               content: Text(
+                      //                   'Please select a location and enter a sub location name')),
+                      //         );
+                      //       }
+                      //     },
+                      //     child: const Text('Add Sub Location'),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -385,6 +452,172 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void showEditSubLocationModal(BuildContext context, String subLocationId,
+      String locationId, String currentName) {
+    final TextEditingController nameController =
+        TextEditingController(text: currentName);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Align(
+          alignment: Alignment.center,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              margin: const EdgeInsets.only(top: 100),
+              padding: const EdgeInsets.all(16),
+              width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    spreadRadius: 5,
+                  )
+                ],
+              ),
+              child: Consumer<SubLocationProviderClass>(
+                builder: (context, SublocationProvider, _) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Edit Sub Location',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Current Name: $currentName',
+                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                          labelText: 'New sublocation name',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              String newLocationName =
+                                  nameController.text.trim();
+                              if (newLocationName.isNotEmpty) {
+                                try {
+                                  await SublocationProvider.updateSubLocation(
+                                      subLocationId,
+                                      locationId,
+                                      newLocationName);
+                                  Navigator.of(context).pop();
+                                  _refreshLocations();
+                                  FocusScope.of(context).unfocus();
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    content: const Text('Sub Location Updated'),
+                                    duration: const Duration(seconds: 3),
+                                  ));
+                                } catch (error) {
+                                  Navigator.of(context).pop();
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    backgroundColor: Colors.redAccent,
+                                    content: Text('Error: $error'),
+                                    duration: const Duration(seconds: 3),
+                                  ));
+                                }
+                                setState(() {}); // Rebuild widget after update
+                              }
+                            },
+                            child: SublocationProvider.isLoading
+                                ? CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  )
+                                : const Text('Update'),
+                          )
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, String locationId,
+      SubLocationProviderClass locationProvider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: Text('Confirm Deletion'),
+          content: Text('Are you sure you want to delete this sub location?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () async {
+                // Call the delete function from the provider
+                try {
+                  await locationProvider.deleteSubLocation(locationId);
+                  Navigator.of(context).pop(); // Close the dialog
+                  _refreshLocations();
+                  FocusScope.of(context).unfocus();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    content: const Text('Sub Location Deleted'),
+                    duration: const Duration(seconds: 3),
+                  ));
+                } catch (error) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: Colors.redAccent,
+                    content: Text('Error: $error'),
+                    duration: const Duration(seconds: 3),
+                  ));
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
