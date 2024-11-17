@@ -33,11 +33,13 @@ class _AddSublocationPageState extends State<AddSublocationPage> {
     super.initState();
     Provider.of<LocationProviderClass>(context, listen: false)
         .SyncDbAndFetchLocations();
+    Provider.of<SubLocationProviderClass>(context, listen: false)
+        .SyncDbAndFetchSubLocations();
   }
 
   void _refreshLocations() {
-    Provider.of<LocationProviderClass>(context, listen: false)
-        .SyncDbAndFetchLocations();
+    Provider.of<SubLocationProviderClass>(context, listen: false)
+        .SyncDbAndFetchSubLocations();
     setState(() {});
   }
 

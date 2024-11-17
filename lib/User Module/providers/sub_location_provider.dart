@@ -93,6 +93,14 @@ class SubLocationProviderClass extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> fetchSubLocations() async {
+    // loading = true;
+    final locationsList =
+        await _locationRepository.fetchAllSublocationsFromDb();
+    allSubLocations = locationsList;
+    notifyListeners();
+  }
+
   String? getLocationName(String locationId) {
     // Debugging statements to check data and match issues
     if (locationProvider.allLocations == null ||
@@ -118,6 +126,16 @@ class SubLocationProviderClass extends ChangeNotifier {
     }
 
     return location?.locationName;
+  }
+
+  Future<void> SyncDbAndFetchSubLocations() async {
+    try {
+      await _locationRepository.syncDbLocationsAndSublocations();
+      await fetchSubLocations();
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
   }
 
   Future<void> updateSubLocation(

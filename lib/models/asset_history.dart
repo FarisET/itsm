@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 class AssetHistory {
   final String reportedBy;
+  final String reportId;
   final String problem;
   final DateTime datetime;
   final String location;
@@ -11,6 +12,7 @@ class AssetHistory {
 
   AssetHistory({
     required this.reportedBy,
+    required this.reportId,
     required this.problem,
     required this.datetime,
     required this.location,
@@ -23,6 +25,7 @@ class AssetHistory {
   factory AssetHistory.fromJson(Map<String, dynamic> json) {
     return AssetHistory(
       reportedBy: json['Reported by'],
+      reportId: json['Report ID'],
       problem: json['Problem'],
       datetime: DateTime.parse(json['Datetime']),
       location: json['Location'],

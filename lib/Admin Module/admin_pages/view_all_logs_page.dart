@@ -24,7 +24,8 @@ class _LogPageState extends State<LogPage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<AssetLogProvider>(context, listen: false).fetchAssetLogs('');
+    Provider.of<AssetLogProvider>(context, listen: false)
+        .fetchAssetLogs(assetNo: '');
   }
 
   void _filterLogs() {

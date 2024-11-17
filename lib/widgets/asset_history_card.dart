@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:safify/Admin%20Module/providers/asset_log_provider.dart';
 import 'package:safify/models/asset_history.dart';
+import 'package:safify/models/asset_log.dart';
 
 class AssetHistoryTile extends StatefulWidget {
   final AssetHistory assetHistory;
@@ -17,6 +20,9 @@ class _AssetHistoryTileState extends State<AssetHistoryTile> {
 
   @override
   Widget build(BuildContext context) {
+    final assetLogProvider =
+        Provider.of<AssetLogProvider>(context, listen: false);
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -46,6 +52,10 @@ class _AssetHistoryTileState extends State<AssetHistoryTile> {
             setState(() {
               _isExpanded = expanded;
             });
+            if (expanded) {
+              assetLogProvider.fetchAssetLogs(
+                  userReportId: widget.assetHistory.reportId);
+            }
           },
           children: [
             Padding(
@@ -78,6 +88,23 @@ class _AssetHistoryTileState extends State<AssetHistoryTile> {
                     icon: Icons.info_outline,
                     label: 'Status:',
                     value: widget.assetHistory.problemStatus,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Consumer<AssetLogProvider>(
+                    builder: (context, logProvider, child) {
+                      if (logProvider.isLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (logProvider.errorMessage != null) {
+                        return Center(child: Text(logProvider.errorMessage!));
+                      }
+                      if (logProvider.assetLogs.isEmpty) {
+                        return Center(child: Text('No logs available.'));
+                      }
+                      return _buildVerticalTimeline(logProvider.assetLogs);
+                    },
                   ),
                   if (widget.assetHistory.image != null) ...[
                     SizedBox(height: 12),
@@ -155,6 +182,63 @@ class _AssetHistoryTileState extends State<AssetHistoryTile> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildVerticalTimeline(List<AssetLog> logs) {
+    return Column(
+      children: List.generate(logs.length, (index) {
+        final log = logs[index];
+        bool isLast = index == logs.length - 1;
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              children: [
+                // Circle icon
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.circle,
+                    size: 12,
+                    color: Colors.white,
+                  ),
+                ),
+                // Vertical line
+                if (!isLast)
+                  Container(
+                    width: 2,
+                    height: 50,
+                    color: Colors.grey,
+                  ),
+              ],
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    log.actionPerformed,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    DateUtils.timeAgo(log.actionDatetime),
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 }

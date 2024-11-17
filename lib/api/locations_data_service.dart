@@ -227,9 +227,10 @@ class LocationsDataService {
 
       if (errorResponse['error'] ==
           'Duplicate entry error or other SQL exception occurred.') {
-        throw Exception('Department already exists.');
+        throw Exception('Sub location already exists.');
       } else {
-        throw Exception('Failed to add department: ${errorResponse['error']}');
+        throw Exception(
+            'Failed to add sub location: ${errorResponse['error']}');
       }
     }
   }
@@ -258,7 +259,7 @@ class LocationsDataService {
         return;
       } else {
         // Handle error (e.g., throw an error if the response status is not 200)
-        throw Exception('Failed to update location');
+        throw Exception('Failed to update sub location');
       }
     } catch (error) {
       print('Error: $error');
@@ -285,7 +286,7 @@ class LocationsDataService {
         return;
       } else {
         // Handle failure
-        throw Exception('Failed to delete location');
+        throw Exception('Failed to delete sub location');
       }
     } catch (error) {
       print("Error: $error");
