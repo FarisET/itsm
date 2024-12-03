@@ -43,7 +43,7 @@ class AssignedTaskTile extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              "${task.incident_subtype_description!}",
+                              "${task.asset_name ?? 'N/A'}",
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,

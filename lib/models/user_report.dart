@@ -13,6 +13,7 @@ class UserReport {
   final String? image; // You may need to adjust this property's type
   final String? status;
   final String? assetName;
+  final String? assetNo;
 
   UserReport(
       {required this.userId,
@@ -28,7 +29,8 @@ class UserReport {
       required this.incidentCriticalityID,
       required this.image,
       required this.status,
-      required this.assetName});
+      required this.assetName,
+      required this.assetNo});
 
   factory UserReport.fromJson(Map<String, dynamic> json) {
     return UserReport(
@@ -44,6 +46,7 @@ class UserReport {
       image: json['image'],
       status: json['status'],
       assetName: json['asset_name'],
+      assetNo: json['asset_no'],
     );
   }
 
@@ -60,12 +63,13 @@ class UserReport {
       'incident_criticality_id': incidentCriticalityID,
       'image': image,
       'status': status,
-      'asset_name': assetName
+      'asset_name': assetName,
+      'asset_no': assetNo
     };
   }
 
   @override
   String toString() {
-    return 'UserReport{id: $userReportId, user_id: $userId, description: $reportDescription, dateTime: $dateTime, subLocationName: $subLocationName, subLocationID: $subLocationID, incidentSubtypeDescription: $incidentSubtypeDescription, incidentCriticalityLevel: $incidentCriticalityLevel, incidentCriticalityID: $incidentCriticalityID, image: $image, status: $status, assetName: $assetName}';
+    return 'UserReport{id: $userReportId, user_id: $userId, description: $reportDescription, dateTime: $dateTime, subLocationName: $subLocationName, subLocationID: $subLocationID, incidentSubtypeDescription: $incidentSubtypeDescription, incidentCriticalityLevel: $incidentCriticalityLevel, incidentCriticalityID: $incidentCriticalityID, image: $image, status: $status, assetName: $assetName, assetNo: $assetNo}';
   }
 }

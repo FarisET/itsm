@@ -33,7 +33,6 @@ class ActionTeamProviderClass extends ChangeNotifier {
     notifyListeners();
     jwtToken = await storage.read(key: 'jwt');
 
-    print('Fetching incident sub types...ID: $selectedDepartment');
     Uri url = Uri.parse(
         '$IP_URL/admin/dashboard/fetchActionTeams?department_id=$selectedDepartment');
     final response = await http.get(

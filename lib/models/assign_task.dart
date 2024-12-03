@@ -5,6 +5,8 @@ class AssignTask {
   final String? date_of_assignment;
   final String? sub_location_name;
   final String? incident_subtype_description;
+  final String? asset_name;
+  final String? asset_no;
   final String? image;
   final String? incident_criticality_level;
   final String? status;
@@ -16,6 +18,8 @@ class AssignTask {
       required this.date_of_assignment,
       required this.sub_location_name,
       required this.incident_subtype_description,
+      required this.asset_name,
+      required this.asset_no,
       required this.image,
       required this.incident_criticality_level,
       required this.status});
@@ -28,6 +32,8 @@ class AssignTask {
         date_of_assignment: json['date_of_assignment'],
         sub_location_name: json['sub_location_name'],
         incident_subtype_description: json['incident_subtype_description'],
+        asset_name: json['asset_name'],
+        asset_no: json['asset_no'],
         image: json['image'],
         incident_criticality_level: json['incident_criticality_level'],
         status: json['status']);
@@ -41,6 +47,8 @@ class AssignTask {
       'date_of_assignment': date_of_assignment,
       'sub_location_name': sub_location_name,
       'incident_subtype_description': incident_subtype_description,
+      'asset_name': asset_name,
+      'asset_no': asset_no,
       'image': image,
       'incident_criticality_level': incident_criticality_level,
       'status': status

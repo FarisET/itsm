@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:safify/Admin%20Module/admin_pages/asset_history_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/assign_form.dart';
 import 'package:safify/Admin%20Module/providers/delete_user_report_provider.dart';
 import 'package:safify/Admin%20Module/providers/admin_user_reports_provider.dart';
@@ -38,12 +39,26 @@ class AdminUserReportTile extends StatelessWidget {
               children: [
                 Flexible(
                   flex: 70,
-                  child: Text(
-                    userReport.assetName ?? 'N/A',
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AssetHistoryPage(
+                            assetNo: userReport.assetNo!,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      userReport.assetName ?? 'N/A',
+                      style: const TextStyle(
+                        color: Colors.black, // Subtle clickable color
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration
+                            .underline, // Underline for clickable indication
+                      ),
                     ),
                   ),
                 ),
