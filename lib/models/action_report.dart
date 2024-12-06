@@ -15,6 +15,8 @@ class ActionReport {
   String? date_time;
   String? status;
   String? incident_subtype_description;
+  String? assetName;
+  String? assetNo;
 
   ActionReport(
       {required this.date_time,
@@ -32,7 +34,9 @@ class ActionReport {
       required this.proof_image,
       required this.surrounding_image,
       required this.status,
-      required this.incident_subtype_description});
+      required this.incident_subtype_description,
+      required this.assetName,
+      required this.assetNo});
 
   factory ActionReport.fromJson(Map<String, dynamic> json) {
     return ActionReport(
@@ -51,7 +55,9 @@ class ActionReport {
         surrounding_image: json['surrounding_image'] as String?,
         date_time: json['date_time'] as String?,
         status: json['status'] as String?,
-        incident_subtype_description: json['incident_subtype_description']);
+        incident_subtype_description: json['incident_subtype_description'],
+        assetName: json['asset_name'],
+        assetNo: json['asset_no']);
   }
 
   Map<String, dynamic> toJson() {
@@ -71,12 +77,14 @@ class ActionReport {
       'surrounding_image': surrounding_image,
       'date_time': date_time,
       'status': status,
-      'incident_subtype_description': incident_subtype_description
+      'incident_subtype_description': incident_subtype_description,
+      'asset_name': assetName,
+      'asset_no': assetNo
     };
   }
 
   @override
   String toString() {
-    return 'ActionReport{actionTeamName: $actionTeamName, user_report_id: $user_report_id, action_report_id: $action_report_id, report_description: $report_description, question_one: $question_one, question_two: $question_two, question_three: $question_three, question_four: $question_four, question_five: $question_five, resolution_description: $resolution_description, reported_by: $reported_by, surrounding_image: $surrounding_image, proof_image: $proof_image, date_time: $date_time, status: $status, incident_subtype_description: $incident_subtype_description}';
+    return 'ActionReport{actionTeamName: $actionTeamName, user_report_id: $user_report_id, action_report_id: $action_report_id, report_description: $report_description, question_one: $question_one, question_two: $question_two, question_three: $question_three, question_four: $question_four, question_five: $question_five, resolution_description: $resolution_description, reported_by: $reported_by, surrounding_image: $surrounding_image, proof_image: $proof_image, date_time: $date_time, status: $status, incident_subtype_description: $incident_subtype_description, asset_name: $assetName, asset_no: $assetNo}';
   }
 }

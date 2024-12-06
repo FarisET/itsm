@@ -32,7 +32,7 @@ class AssetLogProvider with ChangeNotifier {
       queryParam = 'user_report_id=$userReportId';
     }
 
-    final url = Uri.parse('$IP_URL/analytics/fetchAssetLogs?$queryParam');
+    final url = Uri.parse('$IP_URL/analytics/fetchAssetIssueLogs?$queryParam');
     String? jwtToken = await storage.read(key: 'jwt');
 
     _isLoading = true;

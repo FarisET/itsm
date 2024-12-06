@@ -20,9 +20,9 @@ class CountByLocationProviderClass extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // countByLocation = await fetchTotalIncidentsLocation();
-      countByLocation =
-          await _analyticsRepository.fetchIncidentLocationAnalyticsFromDb();
+      countByLocation = await fetchTotalIncidentsLocation();
+      // countByLocation =
+      //     await _analyticsRepository.fetchIncidentLocationAnalyticsFromDb();
       loading = false;
       notifyListeners();
 

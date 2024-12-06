@@ -20,10 +20,10 @@ class CountByIncidentSubTypesProviderClass extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // countByIncidentSubTypes = await fetchTotalIncidentsOnSubTypes();
+      countByIncidentSubTypes = await fetchTotalIncidentsOnSubTypes();
 
-      countByIncidentSubTypes =
-          await _analyticsRepository.fetchIncidentSubtypeAnalyticsFromDb();
+      // countByIncidentSubTypes =
+      //     await _analyticsRepository.fetchIncidentSubtypeAnalyticsFromDb();
 
       loading = false;
       notifyListeners();

@@ -43,7 +43,7 @@ class AdminActionReportTile extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    actionReport.incident_subtype_description ?? 'N/A',
+                    actionReport.assetName ?? 'N/A',
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 18,

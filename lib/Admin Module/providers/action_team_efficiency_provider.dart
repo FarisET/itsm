@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:safify/Action%20Team%20Module/pages/admin_analytics.dart';
 import 'package:safify/models/action_team_efficiency.dart';
 import 'package:safify/repositories/analytics_repository.dart';
 
@@ -16,14 +14,15 @@ class ActionTeamEfficiencyProviderClass extends ChangeNotifier {
   String? jwtToken;
   final storage = const FlutterSecureStorage();
   final AnalyticsRepository _analyticsRepository = AnalyticsRepository();
+
   Future<List<ActionTeamEfficiency>?> getactionTeamEfficiencyData() async {
     loading = true;
     notifyListeners();
 
     try {
-      // actionTeamEfficiency = await fetchActionTeamEfficiency();
-      actionTeamEfficiency =
-          await _analyticsRepository.fetchActionTeamEfficiencyAnalyticsFromDb();
+      actionTeamEfficiency = await fetchActionTeamEfficiency();
+      // actionTeamEfficiency =
+      //     await _analyticsRepository.fetchActionTeamEfficiencyAnalyticsFromDb();
       print("action team efficiency: $actionTeamEfficiency");
 
       loading = false;
@@ -53,7 +52,7 @@ class ActionTeamEfficiencyProviderClass extends ChangeNotifier {
     final response = await http.get(
       url,
       headers: {
-        'Authorization': 'Bearer $jwtToken', // Include JWT token in headers
+        'Authorization': 'Bearer $jwtToken',
       },
     );
     if (response.statusCode == 200) {
