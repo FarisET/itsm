@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:safify/Admin%20Module/admin_pages/asset_history_page.dart';
+import 'package:safify/Admin%20Module/admin_pages/asset_details_page.dart';
 import 'package:safify/Admin%20Module/admin_pages/assign_form.dart';
 import 'package:safify/Admin%20Module/providers/delete_user_report_provider.dart';
 import 'package:safify/Admin%20Module/providers/admin_user_reports_provider.dart';
@@ -44,7 +44,7 @@ class AdminUserReportTile extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AssetHistoryPage(
+                          builder: (context) => AssetDetailsPage(
                             assetNo: userReport.assetNo!,
                           ),
                         ),

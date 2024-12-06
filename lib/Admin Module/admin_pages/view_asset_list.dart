@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:safify/Admin%20Module/admin_pages/asset_history_page.dart';
+import 'package:safify/Admin%20Module/admin_pages/asset_details_page.dart';
 import 'package:safify/Admin%20Module/providers/admin_asset_provider.dart';
 import 'package:safify/models/asset.dart';
 
@@ -169,7 +169,7 @@ class _ViewAssetState extends State<ViewAsset> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  AssetHistoryPage(
+                                                  AssetDetailsPage(
                                                 assetNo: asset.assetNo!,
                                               ),
                                             ),
@@ -180,7 +180,7 @@ class _ViewAssetState extends State<ViewAsset> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             const Text(
-                                              'View History',
+                                              'View Details',
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.blueAccent,

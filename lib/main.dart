@@ -8,6 +8,7 @@ import 'package:safify/Admin%20Module/providers/action_team_efficiency_provider.
 import 'package:safify/Admin%20Module/providers/admin_asset_provider.dart';
 import 'package:safify/Admin%20Module/providers/all_action_team_provider.dart';
 import 'package:safify/Admin%20Module/providers/announcement_provider.dart';
+import 'package:safify/Admin%20Module/providers/asset_details_provider.dart';
 import 'package:safify/Admin%20Module/providers/asset_log_provider.dart';
 import 'package:safify/Admin%20Module/providers/delete_action_report_provider.dart';
 import 'package:safify/Admin%20Module/providers/delete_user_report_provider.dart';
@@ -174,7 +175,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AdminAssetProvider>(
             create: (context) => AdminAssetProvider()),
         ChangeNotifierProvider<AssetLogProvider>(
-            create: (context) => AssetLogProvider())
+            create: (context) => AssetLogProvider()),
+        ChangeNotifierProvider<AssetDetailsProvider>(
+            create: (context) => AssetDetailsProvider())
       ],
       child: MaterialApp(
         useInheritedMediaQuery: true,

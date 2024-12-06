@@ -3,16 +3,16 @@ import 'package:provider/provider.dart';
 import 'package:safify/Admin%20Module/providers/asset_history_provider.dart';
 import 'package:safify/widgets/asset_history_card.dart';
 
-class AssetHistoryPage extends StatefulWidget {
+class AssetTicketHistoryPage extends StatefulWidget {
   final String assetNo;
 
-  AssetHistoryPage({required this.assetNo});
+  AssetTicketHistoryPage({required this.assetNo});
 
   @override
-  _AssetHistoryPageState createState() => _AssetHistoryPageState();
+  _AssetTicketHistoryPageState createState() => _AssetTicketHistoryPageState();
 }
 
-class _AssetHistoryPageState extends State<AssetHistoryPage> {
+class _AssetTicketHistoryPageState extends State<AssetTicketHistoryPage> {
   String _searchQuery = '';
   List filteredAssetHistory = [];
   List filteredAssetLog = [];
@@ -63,7 +63,7 @@ class _AssetHistoryPageState extends State<AssetHistoryPage> {
               Navigator.of(context).pop();
             },
           ),
-          title: Text("Asset History",
+          title: Text("Tickets",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
