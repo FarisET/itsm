@@ -137,19 +137,40 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
                         ),
                         Divider(),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Icon(Icons.person_outline_outlined,
-                                color: Colors.blue),
-                            SizedBox(width: 8),
-                            Text("${asset.assignedTo}"),
+                            Row(
+                              children: [
+                                const Icon(Icons.person_outline_outlined,
+                                    color: Colors.blue),
+                                const SizedBox(width: 8),
+                                Text(asset.assignedTo),
+                              ],
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined,
+                                  color: Colors.blue),
+                              onPressed: () {},
+                            )
                           ],
                         ),
                         Divider(),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Icon(Icons.pin_drop_outlined, color: Colors.blue),
-                            SizedBox(width: 8),
-                            Text("${asset.assetLocation}"),
+                            Row(
+                              children: [
+                                const Icon(Icons.pin_drop_outlined,
+                                    color: Colors.blue),
+                                const SizedBox(width: 8),
+                                Text(asset.assetLocation),
+                              ],
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined,
+                                  color: Colors.blue),
+                              onPressed: () {},
+                            )
                           ],
                         ),
                         Divider(),
