@@ -14,6 +14,7 @@ import 'package:safify/Admin%20Module/providers/delete_action_report_provider.da
 import 'package:safify/Admin%20Module/providers/delete_user_report_provider.dart';
 import 'package:safify/Admin%20Module/providers/fetch_countOfLocations_provider%20copy.dart';
 import 'package:safify/Admin%20Module/providers/fetch_locations_server.dart';
+import 'package:safify/Admin%20Module/providers/fetch_users_provider.dart';
 import 'package:safify/Admin%20Module/providers/search_solution_forum_provider.dart';
 import 'package:safify/User%20Module/pages/home_page.dart';
 import 'package:safify/User%20Module/pages/splash_screen.dart';
@@ -177,7 +178,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AssetLogProvider>(
             create: (context) => AssetLogProvider()),
         ChangeNotifierProvider<AssetDetailsProvider>(
-            create: (context) => AssetDetailsProvider())
+            create: (context) => AssetDetailsProvider()),
+        ChangeNotifierProvider<FetchUsersProvider>(
+            create: (context) => FetchUsersProvider()),
       ],
       child: MaterialApp(
         useInheritedMediaQuery: true,

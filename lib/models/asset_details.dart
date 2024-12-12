@@ -12,6 +12,7 @@ class AssetDetails {
   final String userName;
   final String assetLocation;
   final String locationName;
+  final String assetSubLocationId;
 
   AssetDetails({
     required this.assetNo,
@@ -27,6 +28,7 @@ class AssetDetails {
     required this.userName,
     required this.assetLocation,
     required this.locationName,
+    required this.assetSubLocationId,
   });
 
   factory AssetDetails.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,7 @@ class AssetDetails {
       assignedTo: json['assigned_to'] ?? '',
       userName: json['user_name'] ?? '',
       assetLocation: json['asset_location'] ?? '',
+      assetSubLocationId: json['asset_location_id'] ?? '',
       locationName: json['location_name'] ?? '',
     );
   }
@@ -61,6 +64,7 @@ class AssetDetails {
       'user_name': userName,
       'asset_location': assetLocation,
       'location_name': locationName,
+      'asset_location_id': assetSubLocationId
     };
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:safify/Admin%20Module/admin_pages/asset_ticket_history_page.dart';
 import 'package:safify/Admin%20Module/providers/asset_details_provider.dart';
+import 'package:safify/Admin%20Module/providers/fetch_users_provider.dart';
 import 'package:safify/User%20Module/providers/location_provider.dart';
 import 'package:safify/User%20Module/providers/sub_location_provider.dart';
 
@@ -15,10 +17,12 @@ class AssetDetailsPage extends StatefulWidget {
 
 class _AssetDetailsPageState extends State<AssetDetailsPage> {
   String? _selectedSubLocation; // To store selected sub-location
+  String? _selectedUserId; // To store selected sub-location
   bool isEditingName = false;
   bool isEditingDesc = false;
   bool isEditingType = false;
   bool isEditingLocation = false;
+  bool isAssigning = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -27,6 +31,8 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
   final TextEditingController descController = TextEditingController();
   final TextEditingController typeController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
+  TextEditingController assignmentController = TextEditingController();
+  TextEditingController assignmentControllerName = TextEditingController();
 
   @override
   void initState() {
@@ -39,6 +45,8 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
 
       Provider.of<LocationProviderClass>(context, listen: false)
           .fetchLocations();
+
+      Provider.of<FetchUsersProvider>(context, listen: false).fetchUsers();
     });
   }
 
@@ -113,6 +121,69 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
       },
     );
     return _selectedSubLocation;
+  }
+
+  Future<String?> _showAssignmentBottomSheet(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return ChangeNotifierProvider<FetchUsersProvider>(
+          create: (_) => FetchUsersProvider()..fetchUsers(),
+          child: Consumer<FetchUsersProvider>(
+            builder: (context, fetchUsersProvider, child) {
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      decoration: const InputDecoration(
+                        labelText: 'Search Users',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (value) {
+                        // You can implement a search/filter logic in your provider
+                        // if needed, or simply filter locally
+                      },
+                    ),
+                    Expanded(
+                      child: fetchUsersProvider.isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : ListView.builder(
+                              itemCount: fetchUsersProvider.users.length,
+                              itemBuilder: (context, index) {
+                                final user = fetchUsersProvider.users[index];
+                                return ListTile(
+                                  title: Text(user.user_id ?? 'Unknown'),
+                                  subtitle: Text(user.user_id ?? 'N/A'),
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedUserId = user.user_id;
+                                      assignmentController.text = user.user_id;
+                                      assignmentControllerName.text =
+                                          user.user_id;
+                                    });
+                                    Navigator.pop(context, _selectedUserId);
+                                  },
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    return _selectedUserId;
   }
 
   @override
@@ -334,7 +405,7 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
                             SizedBox(height: 4), // Space between label and Row
                             Row(
                               children: [
-                                Icon(Icons.account_tree_outlined,
+                                Icon(Icons.arrow_circle_down_sharp,
                                     color: Colors.blue),
                                 SizedBox(width: 8),
                                 Text(
@@ -394,6 +465,153 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
                           ],
                         ),
                         const Divider(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Asset Assignment", // Label text
+                              style: TextStyle(
+                                fontSize: 10, // Smaller font size
+                                color: Colors.grey, // Gray color
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.person_2_outlined,
+                                    color: Color.fromRGBO(33, 150, 243, 1)),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: isAssigning
+                                      ? AbsorbPointer(
+                                          child: TextFormField(
+                                            //   readOnly: true,
+                                            controller: assignmentController,
+                                          ),
+                                        )
+                                      : Text(
+                                          (assignmentController.text.isNotEmpty
+                                                  ? assignmentController.text
+                                                  : asset.assignedTo) ??
+                                              'N/A',
+                                        ),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    isAssigning
+                                        ? Icons.check
+                                        : Icons.edit_outlined,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () async {
+                                    await _showAssignmentBottomSheet(context);
+                                    setState(() {
+                                      isAssigning = !isAssigning;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Aligns the label with the Row
+                          children: [
+                            Text(
+                              "Creation Date", // Label text
+                              style: TextStyle(
+                                fontSize: 10, // Smaller font size
+                                color: Colors.grey, // Gray color
+                              ),
+                            ),
+                            SizedBox(height: 4), // Space between label and Row
+                            Row(
+                              children: [
+                                Icon(Icons.calendar_month_outlined,
+                                    color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text("${asset.assetCreationDate}"),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 4),
+                        const Divider(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Aligns the label with the Row
+                          children: [
+                            Text(
+                              "Is Active", // Label text
+                              style: TextStyle(
+                                fontSize: 10, // Smaller font size
+                                color: Colors.grey, // Gray color
+                              ),
+                            ),
+                            SizedBox(height: 4), // Space between label and Row
+                            Row(
+                              children: [
+                                Icon(Icons.check_circle_outline_rounded,
+                                    color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text(
+                                    "${asset.isActive[0].toUpperCase()}${asset.isActive.substring(1)}"),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+                        SizedBox(
+                            height: MediaQuery.sizeOf(context).height * 0.02),
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.support_agent_sharp, color: Colors.blue),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Tickets: ${asset.assetIssueCount}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      // Navigate to the Linked Tickets page
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            AssetTicketHistoryPage(
+                                          assetNo: asset.assetNo,
+                                        ),
+                                      ));
+                                    },
+                                    child: Text(
+                                      "View Linked Tickets",
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.underline,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+                        SizedBox(
+                            height: MediaQuery.sizeOf(context).height * 0.02),
+
                         // Update Button
                         ElevatedButton(
                           onPressed: () async {
@@ -415,9 +633,10 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
                                   nameController.text,
                                   descController.text,
                                   asset.assetTypeId,
-                                  _selectedSubLocation!,
+                                  _selectedSubLocation ??
+                                      asset.assetSubLocationId,
                                   asset.status!,
-                                  asset.assignedTo,
+                                  _selectedUserId ?? asset.assignedTo,
                                 );
 
                                 // Close the loading dialog
