@@ -11,9 +11,11 @@ class AssetDetailsProvider with ChangeNotifier {
   List<AssetDetails> _assetHistory = [];
   String? _errorMessage;
   bool _isLoading = false;
+  String? _updateAssetErrorMessage;
 
   List<AssetDetails> get assetHistory => _assetHistory;
   String? get errorMessage => _errorMessage;
+  String? get updateAssetErrorMessage => _updateAssetErrorMessage;
   bool get isLoading => _isLoading;
 
   Future<void> fetchAssetDetails(String assetNo) async {
@@ -60,7 +62,7 @@ class AssetDetailsProvider with ChangeNotifier {
     String? jwtToken = await storage.read(key: 'jwt');
 
     _isLoading = true;
-    _errorMessage = null;
+    _updateAssetErrorMessage = null;
     notifyListeners();
 
     try {
@@ -85,13 +87,13 @@ class AssetDetailsProvider with ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _errorMessage =
+        _updateAssetErrorMessage =
             'Error: ${response.statusCode} - ${response.reasonPhrase}';
         notifyListeners();
         return false;
       }
     } catch (error) {
-      _errorMessage = 'An error occurred: $error';
+      _updateAssetErrorMessage = 'An error occurred: $error';
       notifyListeners();
       return false;
     } finally {

@@ -37,7 +37,7 @@ class AssetDetails {
       assetType: json['asset_type'] ?? '',
       assetTypeId: json['asset_type_id'] ?? '',
       assetCreationDate: DateTime.parse(json['asset_creation_date']),
-      status: json['status'] ?? '',
+      status: json['asset_status'] ?? '',
       assetIssueCount: json['asset_issue_count'] ?? 0,
       isActive: json['is_active'] ?? '',
       assignedTo: json['assigned_to'] ?? '',

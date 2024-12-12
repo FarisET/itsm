@@ -264,7 +264,7 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
                             Row(
                               children: [
                                 const Icon(Icons.description,
-                                    color: Colors.orange),
+                                    color: Colors.blue),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: isEditingDesc
@@ -314,6 +314,31 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
                                 Icon(Icons.numbers, color: Colors.blue),
                                 SizedBox(width: 8),
                                 Text("${asset.assetType}"),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Aligns the label with the Row
+                          children: [
+                            Text(
+                              "Asset Status", // Label text
+                              style: TextStyle(
+                                fontSize: 10, // Smaller font size
+                                color: Colors.grey, // Gray color
+                              ),
+                            ),
+                            SizedBox(height: 4), // Space between label and Row
+                            Row(
+                              children: [
+                                Icon(Icons.account_tree_outlined,
+                                    color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text(
+                                    "${asset.status[0].toUpperCase()}${asset.status.substring(1)}"),
                               ],
                             ),
                           ],
@@ -371,17 +396,67 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
                         const Divider(),
                         // Update Button
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              provider.updateAsset(
-                                asset.assetNo!,
-                                nameController.text,
-                                descController.text,
-                                asset.assetTypeId,
-                                locationController.text,
-                                asset.status!,
-                                asset.assignedTo,
+                              // Show loading dialog
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                },
                               );
+
+                              try {
+                                // Call the updateAsset method
+                                final result = await provider.updateAsset(
+                                  asset.assetNo!,
+                                  nameController.text,
+                                  descController.text,
+                                  asset.assetTypeId,
+                                  _selectedSubLocation!,
+                                  asset.status!,
+                                  asset.assignedTo,
+                                );
+
+                                // Close the loading dialog
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+
+                                if (result) {
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content:
+                                          Text('Asset updated successfully!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                } else {
+                                  // Handle specific error case
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Failed to update asset. Please try again.'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              } catch (error) {
+                                // Close the loading dialog
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'An error occurred: ${error.toString()}'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             }
                           },
                           child: const Text('Update Asset'),
