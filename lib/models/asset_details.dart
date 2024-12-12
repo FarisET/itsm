@@ -3,6 +3,7 @@ class AssetDetails {
   final String assetName;
   final String assetDesc;
   final String assetType;
+  final int assetTypeId;
   final DateTime assetCreationDate;
   final String status;
   final int assetIssueCount;
@@ -17,6 +18,7 @@ class AssetDetails {
     required this.assetName,
     required this.assetDesc,
     required this.assetType,
+    required this.assetTypeId,
     required this.assetCreationDate,
     required this.status,
     required this.assetIssueCount,
@@ -33,6 +35,7 @@ class AssetDetails {
       assetName: json['asset_name'] ?? '',
       assetDesc: json['asset_desc'] ?? '',
       assetType: json['asset_type'] ?? '',
+      assetTypeId: json['asset_type_id'] ?? '',
       assetCreationDate: DateTime.parse(json['asset_creation_date']),
       status: json['status'] ?? '',
       assetIssueCount: json['asset_issue_count'] ?? 0,

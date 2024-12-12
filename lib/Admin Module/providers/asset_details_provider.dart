@@ -4,7 +4,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:safify/constants.dart';
 import 'package:safify/models/asset_details.dart';
-import 'package:safify/models/asset_history.dart';
 
 class AssetDetailsProvider with ChangeNotifier {
   final storage = FlutterSecureStorage();
@@ -29,13 +28,12 @@ class AssetDetailsProvider with ChangeNotifier {
       final response = await http.get(
         url,
         headers: {
-          'Authorization': 'Bearer $jwtToken', // Include JWT token in headers
+          'Authorization': 'Bearer $jwtToken',
         },
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        // Correctly using AssetHistory.fromJson instead of assetHistory.fromJson
         _assetHistory =
             data.map((json) => AssetDetails.fromJson(json)).toList();
       } else {
@@ -47,6 +45,57 @@ class AssetDetailsProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<bool> updateAsset(
+      String asset_no,
+      String asset_name,
+      String asset_desc,
+      int asset_type_id,
+      String asset_location,
+      String status,
+      String assignedTo) async {
+    final url = Uri.parse('$IP_URL/admin/dashboard/updateAsset');
+    String? jwtToken = await storage.read(key: 'jwt');
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'asset_no': asset_no,
+          'asset_name': asset_name,
+          'asset_desc': asset_desc,
+          'asset_type_id': asset_type_id,
+          'asset_location': asset_location,
+          'status': status,
+          'assigned_to': assignedTo,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        notifyListeners();
+        return true;
+      } else {
+        _errorMessage =
+            'Error: ${response.statusCode} - ${response.reasonPhrase}';
+        notifyListeners();
+        return false;
+      }
+    } catch (error) {
+      _errorMessage = 'An error occurred: $error';
+      notifyListeners();
+      return false;
+    } finally {
+      _isLoading = false;
     }
   }
 }
