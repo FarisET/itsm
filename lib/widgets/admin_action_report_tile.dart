@@ -58,7 +58,8 @@ class AdminActionReportTile extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       actionReport.date_time != null
-                          ? '${actionReport.date_time!.split('T')[0]} | ${actionReport.date_time!.split('T')[1].replaceAll(RegExp(r'\.\d+Z$'), '')}'
+                          // ? '${actionReport.date_time!.split('T')[0]} | ${actionReport.date_time!.split('T')[1].replaceAll(RegExp(r'\.\d+Z$'), '')}'
+                          ? '${actionReport.date_time!.split('T')[0]}'
                           : 'No Date',
                       style: const TextStyle(color: Colors.black54),
                     ),
