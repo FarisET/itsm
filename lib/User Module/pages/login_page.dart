@@ -156,11 +156,14 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    ),
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Release - Version 1.1909",
+                          "Release - Version 1.12.20",
                           style: TextStyle(color: Colors.grey),
                         ),
                       ],

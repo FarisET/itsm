@@ -53,6 +53,7 @@ class _UserReportListState extends State<UserReportList> {
       if (reportProvider.error != null &&
           reportProvider.error!.contains('TokenExpiredException')) {
         if (reportProvider.error!.contains('TokenExpiredException')) {
+          reportProvider.error = null;
           WidgetsBinding.instance
               .addPostFrameCallback((_) => _handleSessionExpired(context));
         }

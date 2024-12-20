@@ -11,6 +11,12 @@ class ActionReportsProvider with ChangeNotifier {
   bool isLoading = false;
   String? _error;
   String? get error => _error;
+
+  set error(String? value) {
+    _error = value;
+    notifyListeners();
+  }
+
   final AdminActionReportsRepository _actionReportRepository =
       AdminActionReportsRepository();
 

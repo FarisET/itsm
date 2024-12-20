@@ -23,15 +23,6 @@ class _AdminUserReportsListState extends State<AdminUserReportsList> {
       final result =
           Provider.of<AdminUserReportsProvider>(context, listen: false)
               .fetchAdminUserReports(context);
-      // result.then(
-      //   (value) {
-      //     if (value.contains("success")) {
-      //       ToastService.showUpdatedLocalDbSuccess(context);
-      //     } else {
-      //       ToastService.showFailedToFetchReportsFromServer(context);
-      //     }
-      //   },
-      // );
     }
   }
 
@@ -62,6 +53,7 @@ class _AdminUserReportsListState extends State<AdminUserReportsList> {
         builder: (context, adminUserReportsProvider, _) {
       if (adminUserReportsProvider.error != null &&
           adminUserReportsProvider.error!.contains('TokenExpiredException')) {
+        adminUserReportsProvider.error = null;
         WidgetsBinding.instance
             .addPostFrameCallback((_) => _handleSessionExpired(context));
       }

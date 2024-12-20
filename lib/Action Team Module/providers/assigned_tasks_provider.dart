@@ -13,6 +13,11 @@ class AssignedTasksProvider with ChangeNotifier {
   String? _error;
   String? get error => _error;
 
+  set error(String? value) {
+    _error = value;
+    notifyListeners();
+  }
+
   Future<String> fetchAssignedTasks(BuildContext context) async {
     try {
       _error = null;

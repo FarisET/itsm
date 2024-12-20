@@ -52,6 +52,7 @@ class _AssignedTaskListState extends State<AssignedTaskList> {
       }
       if (assignProvider.error != null) {
         if (assignProvider.error!.contains('TokenExpiredException')) {
+          assignProvider.error = null;
           WidgetsBinding.instance
               .addPostFrameCallback((_) => _handleSessionExpired(context));
           return const Text("Failed to load tasks, session expired.");
