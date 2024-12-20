@@ -16,6 +16,7 @@ class _AssetTicketHistoryPageState extends State<AssetTicketHistoryPage> {
   String _searchQuery = '';
   List filteredAssetHistory = [];
   List filteredAssetLog = [];
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
@@ -71,82 +72,81 @@ class _AssetTicketHistoryPageState extends State<AssetTicketHistoryPage> {
               )),
           backgroundColor: Colors.white,
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.05, vertical: screenHeight * 0.05),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                // Search Bar
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.01,
-                      vertical: screenHeight * 0.01),
-                  child: Expanded(
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
-                      child: TextField(
-                        onChanged: (query) {
-                          final provider = Provider.of<AssetHistoryProvider>(
-                              context,
-                              listen: false);
-                          filterAssetHistory(query, provider.assetHistory);
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Search',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(),
-                          ),
-                          suffixIcon: Icon(Icons.search),
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05, vertical: screenHeight * 0.05),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  // Search Bar
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: screenHeight * 0.02,
+                        horizontal: screenWidth * 0.02),
+                    child: TextField(
+                      onChanged: (query) {
+                        final provider = Provider.of<AssetHistoryProvider>(
+                            context,
+                            listen: false);
+                        filterAssetHistory(query, provider.assetHistory);
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Search',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(),
                         ),
+                        suffixIcon: Icon(Icons.search),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Consumer<AssetHistoryProvider>(
-                    builder: (context, provider, child) {
-                      if (provider.isLoading) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      if (provider.errorMessage != null) {
-                        return Center(child: Text(provider.errorMessage!));
-                      }
-                      // Check if filteredAssetHistory is empty after filtering
-                      if (filteredAssetHistory.isEmpty) {
-                        return Center(
-                            child:
-                                Text("No history available for this asset."));
-                      }
+                  Expanded(
+                    child: Consumer<AssetHistoryProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.isLoading) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        if (provider.errorMessage != null) {
+                          return Center(child: Text(provider.errorMessage!));
+                        }
+                        // Check if filteredAssetHistory is empty after filtering
+                        if (filteredAssetHistory.isEmpty) {
+                          return Center(
+                              child:
+                                  Text("No history available for this asset."));
+                        }
 
-                      // Display the filtered asset history
-                      return ListView.builder(
-                        itemCount: filteredAssetHistory.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: screenHeight *
-                                    0.01), // Ensure padding is consistent
-                            child: Container(
-                              width: double
-                                  .infinity, // Make sure the card takes full width
-                              child: AssetHistoryTile(
-                                  assetHistory: filteredAssetHistory[index]),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                        // Display the filtered asset history
+                        return ListView.builder(
+                          itemCount: filteredAssetHistory.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: screenHeight *
+                                      0.01), // Ensure padding is consistent
+                              child: Container(
+                                width: double
+                                    .infinity, // Make sure the card takes full width
+                                child: AssetHistoryTile(
+                                    assetHistory: filteredAssetHistory[index]),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
