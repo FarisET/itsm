@@ -33,9 +33,14 @@ class _SearchSolutionForumState extends State<SearchSolutionForum> {
             [];
     setState(() {
       filteredSolutionForums = allSolutionForums.where((team) {
-        final matchesQuery =
+        final problemMatches =
             team.problem.toLowerCase().contains(query.toLowerCase());
-        return matchesQuery;
+        final assetNoMatches =
+            team.assetNo?.toLowerCase().contains(query.toLowerCase()) ?? false;
+        final assetNameMatches =
+            team.assetName?.toLowerCase().contains(query.toLowerCase()) ??
+                false;
+        return problemMatches || assetNoMatches || assetNameMatches;
       }).toList();
     });
   }
@@ -227,60 +232,215 @@ class _SearchSolutionForumState extends State<SearchSolutionForum> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            // Asset No Section
+                                            if (forum.assetNo !=
+                                                'No asset number specified')
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Asset Number',
+                                                    style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 10),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 2,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Icon(Icons.numbers,
+                                                          color: Colors.blue),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02),
+                                                      Expanded(
+                                                        child: Text(
+                                                          forum.assetNo,
+                                                          maxLines: 3,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .black87),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  if (forum.assetName !=
+                                                          'No asset name specified' ||
+                                                      forum.problem.isNotEmpty)
+                                                    const Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 8.0),
+                                                      child:
+                                                          Divider(thickness: 1),
+                                                    ),
+                                                ],
+                                              ),
+
+                                            // Asset Name Section
+                                            if (forum.assetName !=
+                                                'No asset name specified')
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Asset Name',
+                                                    style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 10),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 2,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Icon(
+                                                          Icons.laptop_mac,
+                                                          color: Colors
+                                                              .blueAccent),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02),
+                                                      Expanded(
+                                                        child: Text(
+                                                          forum.assetName,
+                                                          maxLines: 3,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .black87),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  if (forum.problem.isNotEmpty)
+                                                    const Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 8.0),
+                                                      child:
+                                                          Divider(thickness: 1),
+                                                    ),
+                                                ],
+                                              ),
+
                                             // Problem Section
-                                            Row(
+                                            if (forum.problem.isNotEmpty)
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Problem',
+                                                    style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 10),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 2,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Icon(
+                                                          Icons.error_outline,
+                                                          color:
+                                                              Colors.redAccent),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02),
+                                                      Expanded(
+                                                        child: Text(
+                                                          forum.problem,
+                                                          maxLines: 3,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .black87),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+
+                                            // Divider between Problem and Solution
+                                            if (forum.solution != null)
+                                              const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 8.0),
+                                                child: Divider(thickness: 1),
+                                              ),
+
+                                            // Solution Section
+                                            Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                const Icon(Icons.error_outline,
-                                                    color: Colors.redAccent),
+                                                Text(
+                                                  'Solution',
+                                                  style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 10),
+                                                ),
                                                 SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.02),
-                                                Expanded(
-                                                  child: Text(
-                                                    forum.problem,
-                                                    maxLines: 3,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        color: Colors.black87),
-                                                  ),
+                                                  height: 2,
+                                                ),
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    const Icon(
+                                                        Icons.lightbulb_outline,
+                                                        color: Colors.green),
+                                                    const SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Text(
+                                                        forum.solution ??
+                                                            'No solution available',
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: const TextStyle(
+                                                            color:
+                                                                Colors.black54),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
-
-                                            // Divider between Problem and Solution
                                             const Padding(
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 8.0),
                                               child: Divider(thickness: 1),
-                                            ),
-
-                                            // Solution Section
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Icon(
-                                                    Icons.lightbulb_outline,
-                                                    color: Colors.green),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Text(
-                                                    forum.solution ??
-                                                        'No solution available',
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        color: Colors.black54),
-                                                  ),
-                                                ),
-                                              ],
                                             ),
 
                                             // "View Steps" Button

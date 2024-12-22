@@ -1,11 +1,15 @@
 class SolutionForum {
   final String problem;
   final String solution;
+  final String assetName;
+  final String assetNo;
   final List<Step> steps;
 
   SolutionForum({
     required this.problem,
     required this.solution,
+    required this.assetName,
+    required this.assetNo,
     required this.steps,
   });
 
@@ -17,6 +21,8 @@ class SolutionForum {
     return SolutionForum(
       problem: json['Problem'] ?? '',
       solution: json['Solution'] ?? '',
+      assetName: json['Asset Name'] ?? '',
+      assetNo: json['Asset Number'] ?? '',
       steps: stepsList,
     );
   }
